@@ -1,0 +1,44 @@
+<div class="jump-to-nav">
+    <button class="jump-to-nav__maximize" type="button" aria-label="Maximize">
+        <svg aria-hidden="true" width="8.5px" height="14.1px" viewBox="0 0 8.5 14.1" xml:space="preserve" style="pointer-events: none;">
+            <style>
+                .maximize-polygon {
+                    fill: var(--jtn-text-color);
+                }
+            </style>
+            <polygon class="maximize-polygon" points="0,7.1 7.1,14.1 8.5,12.7 2.8,7.1 8.5,1.4 7.1,0 0,7.1 0,7.1 "></polygon>
+        </svg>
+    </button>
+
+    <div class="jump-to-nav__content">
+        <div class="jump-to-nav__header">
+            <div class="jump-to-nav__heading" role="heading" aria-level="1">On this page</div>
+            
+            <button class="jump-to-nav__minimize" type="button" aria-label="Minimize">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" xml:space="preserve" style="pointer-events: none;">
+                    <style type="text/css">
+                        .minimize-line {
+                            fill: none;
+                            stroke: var(--jtn-text-color);
+                            stroke-linecap: round;
+                            stroke-linejoin: round;
+                            stroke-miterlimit: 10;
+                            stroke-width: 2px;
+                        }
+                    </style>
+                    <line class="minimize-line" x1="9" y1="14" x2="19" y2="14"/>
+                </svg>
+            </button>
+            
+            {# <div class="jump-to-nav__search">
+                <input id="autoComplete" class="jump-to-nav__search-input" type="text" placeholder="Search">
+            </div> #}
+            
+        </div>
+        
+        <div class="jump-to-nav__body">
+            {# <div class="jump-to-nav__heading" role="heading" aria-level="2">Components</div> #}
+            <nav class="jump-to-nav__nav"></nav>
+        </div>
+    </div>
+</div>
