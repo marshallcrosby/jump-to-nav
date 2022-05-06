@@ -51,19 +51,19 @@
     // Render nav elements
     //
 
-    let jumpToWrapper = document.createElement('div');
-    jumpToWrapper.classList.add('jump-to-nav-wrapper');
+    let jumpToWrapperEl = document.createElement('div');
+    jumpToWrapperEl.classList.add('jump-to-nav-wrapper');
 
     let jumpToHTML = `//import _jump-to-nav.html`;
-    jumpToWrapper.innerHTML = jumpToHTML;
-    document.body.appendChild(jumpToWrapper);
+    jumpToWrapperEl.innerHTML = jumpToHTML;
+    document.body.appendChild(jumpToWrapperEl);
 
     if (topLocation !== null) {
-        jumpToWrapper.style.top = topLocation;
+        jumpToWrapperEl.style.top = topLocation;
     }
     
     if (zIndex !== null) {
-        jumpToWrapper.style.zIndex = zIndex;
+        jumpToWrapperEl.style.zIndex = zIndex;
     }
 
 
@@ -206,16 +206,16 @@
     // Maximize / minimize buttons
     //
 
-    let maximizeButton = jumpToWrapper.querySelector('.jump-to-nav__maximize');
+    let maximizeButton = jumpToWrapperEl.querySelector('.jump-to-nav__maximize');
 
     maximizeButton.addEventListener('click', function () {
-        jumpToWrapper.classList.add('jump-to-nav-wrapper--showing');
+        jumpToWrapperEl.classList.add('jump-to-nav-wrapper--showing');
     });
 
-    let minimizeButton = jumpToWrapper.querySelector('.jump-to-nav__minimize');
+    let minimizeButton = jumpToWrapperEl.querySelector('.jump-to-nav__minimize');
 
     minimizeButton.addEventListener('click', function () {
-        jumpToWrapper.classList.remove('jump-to-nav-wrapper--showing');
+        jumpToWrapperEl.classList.remove('jump-to-nav-wrapper--showing');
     });
 
 
@@ -224,15 +224,31 @@
     //
     
     document.addEventListener('click', function(event) {
-        let withinBoundaries = event.composedPath().includes(jumpToWrapper);
+        let withinBoundaries = event.composedPath().includes(jumpToWrapperEl);
         
-        if (jumpToWrapper.classList.contains('jump-to-nav-wrapper--showing')) {
+        if (jumpToWrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
             if (!withinBoundaries) {
                 minimizeButton.click();
             }
         }
     });
 
+
+    //
+    // Set height for overflow scrolling if needed
+    //
+
+    function setMaxHeight(el) {
+        let panelHeader = document.querySelector('.jump-to-nav__header');
+        let panelBody = document.querySelector('.jump-to-nav__body');
+        let topLocation = parseInt(el.getBoundingClientRect().top);
+        let jumpToHeaderHeight = parseInt(panelHeader.offsetHeight);
+        let maxHeight = (topLocation + jumpToHeaderHeight) + 40;
+
+        panelBody.style.maxHeight = 'calc(100vh - ' + maxHeight + 'px)';
+    }
+
+    setMaxHeight(jumpToWrapperEl);
 
     
     /* --------------------------------------------------------------------------

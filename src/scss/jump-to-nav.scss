@@ -9,12 +9,14 @@
     --jtn-border-radius: .75em;
     --jtn-box-shadow-deep: 3px 5px 25px rgba(0, 0, 0, .18);
     --jtn-bg-color: #fff;
-    --jtn-text-color: #444853;
+    --jtn-text-color: #333;
     --jtn-link-color: #1f4de3;
     --jtn-gray-100: #ededed;
+    --jtn-gray-200: #{darken(#ededed, 10%)};
     --jtn-ease: cubic-bezier(0.19, 1, 0.22, 1);
     --jtn-transition-speed: 400ms;
     --jtn-idle-width: 40px;
+    --jtn-color-border-common: rgba(0, 0, 0, 0.05);
 
     position: fixed;
     top: 6.25em;
@@ -106,8 +108,10 @@
         .jump-to-nav__header {
             display: flex;
             align-items: center;
+            min-height: 50px;
 
-            padding: .9375em .9375em 0 1.25em;
+            padding: 0 .9375em 0 1.25em;
+            border-bottom: 1px solid var(--jtn-color-border-common);
         }
 
         .jump-to-nav__minimize {
@@ -128,19 +132,43 @@
         }
 
         .jump-to-nav__body {
-            padding: 0 1.25em 1.25em;
+            padding: .625em 1.25em;
+            border-right: 1px solid #fff;
+
+            &::-webkit-scrollbar-corner {
+                background-color: transparent;
+            }
+        
+            &::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+        
+            &::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+        
+            &::-webkit-scrollbar-thumb {
+                outline: 0;
+                background-color: var(--jtn-gray-100);
+
+                &:hover {
+                    background-color: var(--jtn-gray-200);
+                }
+            }
         }
 
         [role="heading"] {
-            margin-bottom: .5em;
-
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: antialiased;
             font-weight: bold;
-
+            
             &[aria-level="1"] {
                 font-size: 1.0625em;
             }
-
+            
             &[aria-level="2"] {
+                margin-bottom: .5em;
                 font-size: .875em;
             }
         }
@@ -159,6 +187,10 @@
 
             .jump-to-nav__maximize {
                 display: none;
+            }
+
+            .jump-to-nav__body {
+                overflow: auto;
             }
         }
     }
