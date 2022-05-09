@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+    -->
+    <link rel="stylesheet" href="css/jump-to-nav.css">
     <title>jump-to</title>
 </head>
 <body style="height: 2000px;">
+    <h1>Jump-to nav</h1>
     <div id="blockID1" data-jtn-anchor="title: Block name 1">
         <h2>Block name 1</h2>
         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
@@ -41,7 +45,16 @@
         <h2>Block name 3</h2>
         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
     </div>
+
+    <h2>Query params</h2>
+    <ul>
+        <li>z-index=5000</li>
+        <li>css=external</li>
+        <li>smooth=true</li>
+        <li>top=200px</li>
+        <li>nest=true</li>
+    </ul>
     
-    <script id="jump-to-nav-js" src="js/jump-to-nav.js?top=200px&nest&z-index=5000&smooth"></script>
+    <script id="jump-to-nav-js" src="js/jump-to-nav.js?top=100px&nest=true&z-index=5000&smooth=true&css=external"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.0.0
+    * Jump to navigation v1.0.1
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -7,17 +7,18 @@
 */
 
 
-/* --------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------
     **TODO:
     ✓ 1. Query params
         • Allow custom Y location
         • Make nesting an option
         • Allow custom z-index
+        • Allow external css
     ✓ 2. Click outside closes panel
-    3. CSS dynamic max-height
+    ✓ 3. CSS dynamic max-height
     4. Focus nav item on current section in view
     5. Add static site navigation
----------------------------------------------------------------------------- */
+-------------------------------------------------------------------------------- */
 
 
 (function () {
@@ -25,77 +26,82 @@
 
 
     /* --------------------------------------------------------------------------
-        Get query params if any
+        Query params
     ---------------------------------------------------------------------------- */
 
     let scriptLinkage = document.getElementById('jump-to-nav-js');
-    let topLocation = null;
-    let nest = null;
-    let zIndex = null;
     let smoothScroll = null;
+    let topLocation = null;
+    let zIndex = null;
+    let nest = null;
+    let css = null;
 
     if (scriptLinkage) {
         let urlParam = new URLSearchParams(scriptLinkage.getAttribute('src').split('?')[1]);
-        topLocation = urlParam.get('top');
-        nest = urlParam.get('nest');
-        zIndex = urlParam.get('z-index');
+        
         smoothScroll = urlParam.get('smooth');
+        topLocation = urlParam.get('top');
+        zIndex = urlParam.get('z-index');
+        nest = urlParam.get('nest');
+        css = urlParam.get('css');
     }
 
 
     /* --------------------------------------------------------------------------
-        Create navigation element and populated it
+        Render nav css
+    ---------------------------------------------------------------------------- */
+
+    if (css !== 'external') {
+        let textStyle = document.createElement('style');
+        textStyle.setAttribute('id', 'jumpToNavStyle');
+    
+        let jumpToCSS = `//import jump-to-nav.css`;
+    
+        // Apply in page styles to style tag
+        textStyle.textContent = jumpToCSS;
+    
+        // Add in page styles to head
+        document.head.appendChild(textStyle);
+    }
+
+
+    /* --------------------------------------------------------------------------
+        Create navigation element and populat it
     ---------------------------------------------------------------------------- */
     
     //
     // Render nav elements
     //
 
-    let jumpToWrapperEl = document.createElement('div');
-    jumpToWrapperEl.classList.add('jump-to-nav-wrapper');
+    let wrapperEl = document.createElement('div');
+    wrapperEl.classList.add('jump-to-nav-wrapper');
 
-    let jumpToHTML = `//import _jump-to-nav.html`;
-    jumpToWrapperEl.innerHTML = jumpToHTML;
-    document.body.appendChild(jumpToWrapperEl);
+    let HTML = `//import _jump-to-nav.html`;
+    wrapperEl.innerHTML = HTML;
+    document.body.appendChild(wrapperEl);
 
     if (topLocation !== null) {
-        jumpToWrapperEl.style.top = topLocation;
+        wrapperEl.style.top = topLocation;
     }
     
     if (zIndex !== null) {
-        jumpToWrapperEl.style.zIndex = zIndex;
+        wrapperEl.style.zIndex = zIndex;
     }
-
-
-    //
-    // Render nav css
-    //
-
-    let textStyle = document.createElement('style');
-    textStyle.setAttribute('id', 'jumpToNavStyle');
-
-    let jumpToCSS = `//import jump-to-nav.css`;
-
-    // Apply in page styles to style tag
-    textStyle.textContent = jumpToCSS;
-
-    // Add in page styles to head
-    document.head.appendChild(textStyle);
 
 
     //
     // Setup elements and add li and links
     //
 
-    let jumpToNavEl = document.querySelector('.jump-to-nav__nav');
-    let styleguidNavList = document.createElement('ul');
+    let navEl = document.querySelector('.jump-to-nav__nav');
+    let navList = document.createElement('ul');
 
-    jumpToNavEl.appendChild(styleguidNavList);
+    navEl.appendChild(navList);
 
-    let jumpToSection = document.querySelectorAll('[data-jtn-anchor]');
+    let section = document.querySelectorAll('[data-jtn-anchor]');
     // let searchTermsArray = [];
     
-    jumpToSection.forEach(function (item, index) {
+    section.forEach(function (item, index) {
         let linkID = item.getAttribute('id');
         let linkListItem = document.createElement('li');
         let options = null;
@@ -125,7 +131,7 @@
 
         linkListItem.innerHTML = linkATag;
 
-        styleguidNavList.appendChild(linkListItem);
+        navList.appendChild(linkListItem);
 
         if (item.parentElement.closest('[data-jtn-anchor]')) {
             let parentListItem = item.parentElement.closest('[data-jtn-anchor]');
@@ -145,10 +151,10 @@
     //
 
     if (nest !== null) {
-        let jumpToLinkChildren = jumpToNavEl.querySelectorAll('[data-jtn-parent]');
+        let linkChildren = navEl.querySelectorAll('[data-jtn-parent]');
 
-        jumpToLinkChildren.forEach(function(item, index) {
-            let parentItem = jumpToNavEl.querySelector('[data-jtn-id="' + item.getAttribute('data-jtn-parent') + '"]');
+        linkChildren.forEach(function(item, index) {
+            let parentItem = navEl.querySelector('[data-jtn-id="' + item.getAttribute('data-jtn-parent') + '"]');
     
             parentItem.appendChild(item);
         });
@@ -158,9 +164,9 @@
         // Add ul inside items with children
         //
         
-        let jumpToNestedChildren = jumpToNavEl.querySelectorAll('[data-jtn-id]');
+        let nestedChildren = navEl.querySelectorAll('[data-jtn-id]');
         
-        jumpToNestedChildren.forEach(function(item, index) {
+        nestedChildren.forEach(function(item, index) {
             if (item.querySelector('[data-jtn-parent]')) {
                 var childUl = document.createElement('ul');
                 item.appendChild(childUl);
@@ -172,9 +178,9 @@
         // Move unwrapped list items into ul
         //
     
-        let unwrappedListItems = jumpToNavEl.querySelectorAll('[data-jtn-id] > [data-jtn-id]');
+        let unwrapListItems = navEl.querySelectorAll('[data-jtn-id] > [data-jtn-id]');
     
-        unwrappedListItems.forEach(function(item, index) {
+        unwrapListItems.forEach(function(item, index) {
             let siblingUl = item.parentNode.lastChild;
     
             siblingUl.appendChild(item);
@@ -187,9 +193,9 @@
     //
 
     if (smoothScroll !== null) {
-        let jumpToNavAnchor = jumpToNavEl.querySelectorAll('.jump-to-nav__item > a');
+        let navAnchor = navEl.querySelectorAll('.jump-to-nav__item > a');
 
-        jumpToNavAnchor.forEach(function (item, index) {
+        navAnchor.forEach(function (item, index) {
             item.addEventListener('click', function (event) {
                 document.documentElement.classList.add('js-jump-to-nav-smooth-scroll');
                 
@@ -200,22 +206,21 @@
         });
     }
 
-    
 
     //
     // Maximize / minimize buttons
     //
 
-    let maximizeButton = jumpToWrapperEl.querySelector('.jump-to-nav__maximize');
+    let maximizeButton = wrapperEl.querySelector('.jump-to-nav__maximize');
 
     maximizeButton.addEventListener('click', function () {
-        jumpToWrapperEl.classList.add('jump-to-nav-wrapper--showing');
+        wrapperEl.classList.add('jump-to-nav-wrapper--showing');
     });
 
-    let minimizeButton = jumpToWrapperEl.querySelector('.jump-to-nav__minimize');
+    let minimizeButton = wrapperEl.querySelector('.jump-to-nav__minimize');
 
     minimizeButton.addEventListener('click', function () {
-        jumpToWrapperEl.classList.remove('jump-to-nav-wrapper--showing');
+        wrapperEl.classList.remove('jump-to-nav-wrapper--showing');
     });
 
 
@@ -223,10 +228,10 @@
     // Click outside
     //
     
-    document.addEventListener('click', function(event) {
-        let withinBoundaries = event.composedPath().includes(jumpToWrapperEl);
+    document.addEventListener('click', function (event) {
+        let withinBoundaries = event.composedPath().includes(wrapperEl);
         
-        if (jumpToWrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
+        if (wrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
             if (!withinBoundaries) {
                 minimizeButton.click();
             }
@@ -243,12 +248,12 @@
         let panelBody = document.querySelector('.jump-to-nav__body');
         let topLocation = parseInt(el.getBoundingClientRect().top);
         let jumpToHeaderHeight = parseInt(panelHeader.offsetHeight);
-        let maxHeight = (topLocation + jumpToHeaderHeight) + 40;
+        let maxHeight = (topLocation + jumpToHeaderHeight) + 60;
 
         panelBody.style.maxHeight = 'calc(100vh - ' + maxHeight + 'px)';
     }
 
-    setMaxHeight(jumpToWrapperEl);
+    setMaxHeight(wrapperEl);
 
     
     /* --------------------------------------------------------------------------

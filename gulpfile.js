@@ -108,6 +108,7 @@ gulp.task('sass', function (done) {
         .pipe(cleanCss({compatibility: 'ie11'}))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(`${roots.dist}/temp`))
+        .pipe(gulp.dest(`${roots.dist}/css`))
         .pipe(connect.reload());
 });
 
