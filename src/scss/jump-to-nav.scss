@@ -189,6 +189,10 @@
                 font-size: .875em;
             }
         }
+
+        .jump-to-nav__item--active {
+            font-weight: bold;
+        }
     }
 
     &.jump-to-nav-wrapper--showing {

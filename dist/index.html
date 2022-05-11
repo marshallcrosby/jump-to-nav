@@ -5,13 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--
+        <link rel="stylesheet" href="css/jump-to-nav.css">
     -->
-    <link rel="stylesheet" href="css/jump-to-nav.css">
-    <title>jump-to</title>
+    <title>jump-to nav</title>
 </head>
 <body style="height: 2000px;">
     <h1>Jump-to nav</h1>
-    <div id="blockID1" data-jtn-anchor="title: Block name 1">
+    
+    <div data-jtn-anchor="title: Block name 1">
         <h2>Block name 1</h2>
         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
     </div>
@@ -29,8 +30,8 @@
                 <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
             </div>
     
-            <div id="blockID2Child1Child2" data-jtn-anchor="title: Block 2 child 1 child 2">
-                <h2>Block 2 child 1 child 2</h2>
+            <div data-jtn-anchor="title: Block 2 child 1 child 2sy">
+                <h2>Block 2 child 1 child 2sy</h2>
                 <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
             </div>
         </div>
@@ -46,8 +47,11 @@
         <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Optio minus, velit perspiciatis tempora libero impedit vitae dolorem id aliquid saepe fugit provident itaque eligendi illo quia animi sequi dolores recusandae?</p>
     </div>
 
-    <h2>Query params</h2>
+    <h2>Query params examples</h2>
+
     <ul>
+        <li>active-section=true</li>
+        <li>heading=On+this+page</li>
         <li>z-index=5000</li>
         <li>css=external</li>
         <li>smooth=true</li>
@@ -55,6 +59,6 @@
         <li>nest=true</li>
     </ul>
     
-    <script id="jump-to-nav-js" src="js/jump-to-nav.js?top=100px&nest=true&z-index=5000&smooth=true&css=external"></script>
+    <script id="jump-to-nav-js" src="js/jump-to-nav.js?top=100px&nest=true&z-index=5000&smooth=true&active-section"></script>
 </body>
 </html>
