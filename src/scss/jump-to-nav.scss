@@ -35,6 +35,7 @@
     font-size: var(--jtn-base-font-size) !important;
 
     filter: drop-shadow( 3px 5px 15px rgba(0, 0, 0, .18));
+    pointer-events: none;
 
     .jump-to-nav {
         overflow: hidden;
@@ -83,6 +84,7 @@
 
             border: 0;
             background-color: var(--jtn-bg-color);
+            pointer-events: auto;
 
             svg {
                 position: relative;
@@ -196,6 +198,8 @@
     }
 
     &.jump-to-nav-wrapper--showing {
+        pointer-events: auto;
+        
         .jump-to-nav {
             clip-path: inset(0 0 0 0 round var(--jtn-border-radius));
 
