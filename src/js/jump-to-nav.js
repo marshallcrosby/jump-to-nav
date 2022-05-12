@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.1.1
+    * Jump to navigation v1.1.2
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -116,6 +116,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
     
         const navItem = document.querySelector('.jump-to-nav__nav');
         const navList = document.createElement('ul');
+        navList.classList.add('jump-to-nav__list');
     
         navItem.appendChild(navList);
     
@@ -152,7 +153,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
     
             const linkTitleText = (options.title !== null) ? options.title : linkID;
             const linkATag = `
-                <a href="#${ linkID }">${ linkTitleText }</a>
+                <a class="jump-to-nav__link" href="#${ linkID }">${ linkTitleText }</a>
             `;
     
             linkListItem.innerHTML = linkATag;
@@ -195,6 +196,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
             nestedChildren.forEach((item, index) => {
                 if (item.querySelector('[data-jump-parent]')) {
                     var childUl = document.createElement('ul');
+                    childUl.classList.add('jump-to-nav__nested-list')
                     item.appendChild(childUl);
                 }
             });
@@ -298,7 +300,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         const options = {
             root: null,
             threshold: .3,
-            rootMargin: '10px'
+            rootMargin: '-20px'
         }
         
         const observer = new IntersectionObserver( (items, observer) => {
