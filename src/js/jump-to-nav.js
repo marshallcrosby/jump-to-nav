@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.1.2
+    * Jump to navigation v1.1.3
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -34,26 +34,31 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         /* --------------------------------------------------------------------------
             Query params
         ---------------------------------------------------------------------------- */
-    
-        let scriptLinkage = document.getElementById('jump-to-nav-js');
-        let activeSections = null;
-        let smoothScroll = null;
-        let topLocation = null;
-        let heading = null;
-        let zIndex = null;
-        let nest = null;
-        let css = null;
+
+        const scriptLinkage = document.getElementById('jump-to-nav-js');
+        
+        const param = {
+           activeSections: null,
+           smoothScroll: null,
+           topLocation: null,
+           autoClose: null,
+           heading: null,
+           zIndex: null,
+           nest: null,
+           css: null
+        }
     
         if (scriptLinkage) {
             const urlParam = new URLSearchParams(scriptLinkage.getAttribute('src').split('?')[1]);
             
-            activeSections = urlParam.get('active-section');
-            smoothScroll = urlParam.get('smooth');
-            topLocation = urlParam.get('top');
-            heading = urlParam.get('heading');
-            zIndex = urlParam.get('z-index');
-            nest = urlParam.get('nest');
-            css = urlParam.get('css');
+            param.activeSections = urlParam.get('active-section');
+            param.smoothScroll = urlParam.get('smooth');
+            param.topLocation = urlParam.get('top');
+            param.autoClose = urlParam.get('auto-close');
+            param.heading = urlParam.get('heading');
+            param.zIndex = urlParam.get('z-index');
+            param.nest = urlParam.get('nest');
+            param.css = urlParam.get('css');
         }
     
     
@@ -61,7 +66,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
             Render nav css
         ---------------------------------------------------------------------------- */
     
-        if (css !== 'external') {
+        if (param.css !== 'external') {
             const embeddedStyleTag = document.createElement('style');
             embeddedStyleTag.setAttribute('id', 'jumpToNavStyle');
         
@@ -90,12 +95,12 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         navWrapperEl.innerHTML = HTML;
         document.body.appendChild(navWrapperEl);
 
-        if (topLocation !== null) {
-            navWrapperEl.style.top = topLocation;
+        if (param.topLocation !== null) {
+            navWrapperEl.style.top = param.topLocation;
         }
         
-        if (zIndex !== null) {
-            navWrapperEl.style.zIndex = zIndex;
+        if (param.zIndex !== null) {
+            navWrapperEl.style.zIndex = param.zIndex;
         }
 
 
@@ -103,10 +108,10 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         // Set custom heading if param is set
         //
 
-        if (heading !== null) {
+        if (param.heading !== null) {
             const headingEl = navWrapperEl.querySelector('.jump-to-nav__heading');
 
-            headingEl.textContent = heading;
+            headingEl.textContent = param.heading;
         }
     
     
@@ -177,7 +182,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         // Nest li(s) if jumpToSections is nested
         //
     
-        if (nest !== null) {
+        if (param.nest !== null) {
             const linkChildren = navItem.querySelectorAll('[data-jump-parent]');
     
             linkChildren.forEach((item, index) => {
@@ -220,7 +225,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         // Add smooth scroll when using jump to nav
         //
     
-        if (smoothScroll !== null) {
+        if (param.smoothScroll !== null) {
             const navAnchor = navItem.querySelectorAll('.jump-to-nav__item > a');
     
             navAnchor.forEach((item, index) => {
@@ -251,14 +256,36 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
             navWrapperEl.classList.remove('jump-to-nav-wrapper--showing');
         });
     
-        // //=require partials/_click-outside.js
-       
+
+        //       
         // Run max height function
+        //
         setMaxHeight(navWrapperEl);
 
+
+        //
         // Run active section function
-        if (activeSections !== null) {
+        //
+
+        if (param.activeSections !== null) {
             activeSection('[data-jtn-anchor]', '.jump-to-nav-wrapper');
+        }
+
+
+        //
+        // Click outside
+        //
+
+        if (param.autoClose !== null) {
+            document.addEventListener('click', function (event) {
+                const withinBoundaries = event.composedPath().includes(wrapperEl);
+                
+                if (wrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
+                    if (!withinBoundaries) {
+                        minimizeButton.click();
+                    }
+                }
+            });
         }
     }
 
