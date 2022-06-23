@@ -35,7 +35,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
             Query params
         ---------------------------------------------------------------------------- */
 
-        const scriptLinkage = document.getElementById('jump-to-nav-js');
+        const scriptLinkage = document.getElementById('jump-to-nav-js') || document.querySelector('script[src*=jump-to-nav]');
         
         const param = {
            activeSections: null,
@@ -336,23 +336,23 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         const navItem = document.querySelector(navEl);
         const options = {
             root: null,
-            threshold: .3,
-            rootMargin: '-20px'
+            rootMargin: '0px',
+            threshold: 0.5
         }
         
         const observer = new IntersectionObserver( (items, observer) => {
-            items.forEach(item => {
-                if (item.isIntersecting) {
-                    navItem.querySelector('[data-jump-id="' + item.target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].isIntersecting) {
+                    navItem.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
                 } else {
-                    navItem.querySelector('[data-jump-id="' + item.target.getAttribute('id') + '"]').classList.remove('jump-to-nav__item--active');
+                    navItem.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.remove('jump-to-nav__item--active');
                 }
-            })
+            }
         }, options);
-        
-        jumpToSections.forEach(section => {
-            observer.observe(section);
-        });
+
+        for (let i = 0; i < jumpToSections.length; i++) {
+            observer.observe(jumpToSections[i]);
+        }
     }
 })();
 //# sourceMappingURL=jump-to-nav.js.map
