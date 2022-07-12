@@ -128,19 +128,8 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         // let searchTermsArray = [];
         
         jumpToSections.forEach((item, index) => {
-            
-            // Assign id if none is found
-            if (!item.hasAttribute('id')) {
-                item.setAttribute('id', 'jumpToSection' + index);
-            }
 
-            const linkID = item.getAttribute('id');
-            const linkListItem = document.createElement('li');
             let options = null;
-            
-            linkListItem.classList.add('jump-to-nav__item');
-            linkListItem.setAttribute('data-jump-id', linkID);
-    
             options = {
                 title: null
             };
@@ -155,7 +144,20 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
                     }
                 });          
             }
-    
+            
+            // Assign id if none is found
+            if (!item.hasAttribute('id')) {
+                let titleClean = options.title.replace(/[^a-z0-9]/gi, ' ');
+                let titleReady = camelize(titleClean);
+                item.setAttribute('id', titleReady);
+            }
+
+            const linkID = item.getAttribute('id');
+            const linkListItem = document.createElement('li');
+            
+            linkListItem.classList.add('jump-to-nav__item');
+            linkListItem.setAttribute('data-jump-id', linkID);
+                
             const linkTitleText = (options.title !== null) ? options.title : linkID;
             const linkATag = `
                 <a class="jump-to-nav__link" href="#${ linkID }">${ linkTitleText }</a>
@@ -343,5 +345,16 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
         for (let i = 0; i < jumpToSections.length; i++) {
             observer.observe(jumpToSections[i]);
         }
+    }
+
+    //
+    // Camel case string
+    //
+
+    function camelize(str) {
+        return str.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+        if (+match === 0) return "";
+            return index === 0 ? match.toLowerCase() : match.toUpperCase();
+        });
     }
 })();
