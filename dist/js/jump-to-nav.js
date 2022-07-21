@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.1.6
+    * Jump to navigation v1.1.7
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -14,22 +14,23 @@
         ✓ • Make nesting an option
         ✓ • Allow custom z-index
         ✓ • Allow external css
-        • Placement (left, right, top, bottom)
+        • Placement (left, right, top, bottom, custom)
     ✓ 2. Click outside closes panel
     ✓ 3. CSS dynamic max-height
     ✓ 4. Focus nav item on current section in view
     5. Add static site navigation
     ✓ 6. Dynamic IDs if none
     7. Better verbiage/names
+    8. Direction of menu opening
 -------------------------------------------------------------------------------- */
 
 
-const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
+const jumpToElement = document.querySelectorAll('[data-jtn-anchor]');
 
 (function () {
     "use strict"
 
-    if (jumpToSections.length > 0) {
+    if (jumpToElement) {
 
         /* --------------------------------------------------------------------------
             Query params
@@ -137,7 +138,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
     
         // let searchTermsArray = [];
         
-        jumpToSections.forEach((item, index) => {
+        jumpToElement.forEach((item, index) => {
 
             let options = null;
             options = {
@@ -191,7 +192,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
     
     
         //
-        // Nest li(s) if jumpToSections is nested
+        // Nest li(s) if jumpToElement is nested
         //
     
         if (param.nest !== null) {
@@ -290,9 +291,9 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
 
         if (param.autoClose !== null) {
             document.addEventListener('click', function (event) {
-                const withinBoundaries = event.composedPath().includes(wrapperEl);
+                const withinBoundaries = event.composedPath().includes(navWrapperEl);
                 
-                if (wrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
+                if (navWrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
                     if (!withinBoundaries) {
                         minimizeButton.click();
                     }
@@ -334,7 +335,7 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
     //
 
     function activeSection(sectionsEl, navEl) {
-        const jumpToSections = document.querySelectorAll(sectionsEl);
+        const jumpToElement = document.querySelectorAll(sectionsEl);
         const navItem = document.querySelector(navEl);
         const options = {
             root: null,
@@ -352,8 +353,8 @@ const jumpToSections = document.querySelectorAll('[data-jtn-anchor]');
             }
         }, options);
 
-        for (let i = 0; i < jumpToSections.length; i++) {
-            observer.observe(jumpToSections[i]);
+        for (let i = 0; i < jumpToElement.length; i++) {
+            observer.observe(jumpToElement[i]);
         }
     }
 
