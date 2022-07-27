@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.1.7
+    * Jump to navigation v1.1.8
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -30,7 +30,7 @@ const jumpToElement = document.querySelectorAll('[data-jtn-anchor]');
 (function () {
     "use strict"
 
-    if (jumpToElement) {
+    if (jumpToElement.length) {
 
         /* --------------------------------------------------------------------------
             Query params
