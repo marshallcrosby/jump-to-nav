@@ -7,6 +7,7 @@
     // Base
     --jtn-idle-width: 40px;
     --jtn-base-font-size: 16px;
+    --jtn-small-font-size: 12.5px;
     --jtn-ff-primary: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
     --jtn-common-space: .8125em;
     --jtn-border-radius: .75em;
@@ -15,15 +16,14 @@
     --jtn-bg-color: #fff;
     --jtn-text-color: #333;
     --jtn-link-color: #1f4de3;
-    --jtn-link-color-dark: #{darken(#1f4de3, 15%)};
     --jtn-gray-50: #{lighten(#e6e6e6, 5%)};
     --jtn-gray-100: #e6e6e6;
     --jtn-gray-200: #{darken(#e6e6e6, 10%)};
     --jtn-color-border-common: rgba(0, 0, 0, 0.05);
-    --jtn-color-highlight: #{lighten(#1f4de3, 40%)};
+    --jtn-color-highlight: rgba(0, 0, 0, .2);
     
     // Transition
-    --jtn-ease: cubic-bezier(0.19, 1, 0.22, 1);
+    --jtn-ease: cubic-bezier(0.85, 0, 0.15, 1);
     --jtn-transition-speed: 400ms;
     
     // Misc
@@ -39,6 +39,10 @@
 
     filter: drop-shadow( 3px 5px 15px rgba(0, 0, 0, .18));
     pointer-events: none;
+    
+    * {
+        -webkit-font-smoothing: auto;
+    }
 
     *,
     :after,
@@ -127,7 +131,7 @@
 
             color: var(--jtn-link-color);
 
-            font-size: .75em;
+            font-size: var(--jtn-small-font-size);
             font-weight: normal;
 
             text-decoration: none;
@@ -163,7 +167,7 @@
 
         .jump-to-nav__body {
             padding: .625em 1.125em;
-            border-right: 1px solid #fff;
+            border-right: 1px solid var(--jtn-bg-color);
 
             &::-webkit-scrollbar-corner {
                 background-color: transparent;
@@ -243,9 +247,13 @@
     .jump-to-nav__search {
         width: 100%;
         flex: 0 0 100%;
-        font-size: .75em;
+        font-size: var(--jtn-small-font-size);
         position: relative;
         margin: var(--jtn-common-space) 0;
+
+        &.jump-to-nav__search--loading {
+            visibility: hidden;
+        }
     }
 
     .jump-to-nav__search-icon {
@@ -261,15 +269,17 @@
         }
     }
 
-    .jump-to-nav__search-input {
+    .jump-to-nav__search-input[type="text"] {
         width: 100%;
         border: 0;
+        box-shadow: none;
         border-radius: 4px;
         background-color: var(--jtn-gray-50);
-        height: 32px;
-        padding-left: 32px;
-        padding-right: 20px;
+        padding: 10px 0 10px 32px;
         margin: 0;
+        font-size: var(--jtn-small-font-size);
+        font-family: var(--jtn-ff-primary);
+        line-height: 1;
 
         &:focus {
             outline-color: var(--jtn-link-color);
@@ -300,6 +310,8 @@
             padding: 8px 15px;
             border-bottom: 1px solid var(--jtn-gray-100);
             font-weight: bold;
+            font-size: var(--jtn-small-font-size);
+            line-height: 1.4;
 
             &:last-child {
                 border-bottom: 0;
@@ -311,16 +323,17 @@
         }
 
         mark {
+            padding: 0;
             background-color: var(--jtn-gray-100);
         }
 
         [aria-selected="true"] {
             background-color: var(--jtn-link-color);
-            color: #fff;
+            color: var(--jtn-bg-color);
             
             mark {
-                background-color: var(--jtn-link-color-dark);
-                color: #fff;
+                background-color: var(--jtn-color-highlight);
+                color: var(--jtn-bg-color);
             }
         }
     }

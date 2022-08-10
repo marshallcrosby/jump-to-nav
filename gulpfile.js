@@ -132,6 +132,15 @@ gulp.task('server', function (done) {
     done();
 });
 
+gulp.task('watch', function (done) {
+    gulp.watch((`${roots.src}/**/*.html`), gulp.series('html'));
+    gulp.watch((`${roots.src}/scss/**/*.scss`), gulp.series('twig', 'sass', 'js', 'clean-dist'));
+    gulp.watch((`${roots.src}/**/*.twig`), gulp.series('twig', 'sass', 'js', 'clean-dist'));
+    gulp.watch((`${roots.src}/js/**/*`), gulp.series('twig', 'sass', 'js', 'clean-dist'));
+
+    done();
+});
+
 gulp.task('build', gulp.series('twig', 'sass', 'html', 'js', 'clean-dist'));
 
 gulp.task('default', gulp.series('build', 'server', 'clean-dist'));
