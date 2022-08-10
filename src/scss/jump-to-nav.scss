@@ -153,6 +153,12 @@
         
         .jump-to-nav__item {
             padding-left: .625em;
+
+            &:has(.jump-to-nav__item--active) {
+                > .jump-to-nav__link {
+                    font-weight: 500;
+                }
+            }
         }
 
         .jump-to-nav__header {

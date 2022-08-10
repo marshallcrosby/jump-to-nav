@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.2.1
+    * Jump to navigation v1.2.2
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -42,7 +42,6 @@
             
             const param = {
                activeSections: null,
-               smoothScroll: null,
                topLocation: null,
                bottomLocation: null,
                autoClose: null,
@@ -58,7 +57,6 @@
                 const urlParam = new URLSearchParams(scriptLinkage.getAttribute('src').split('?')[1]);
                 
                 param.activeSections = urlParam.get('active-section');
-                param.smoothScroll = urlParam.get('smooth');
                 param.topLocation = urlParam.get('top');
                 param.bottomLocation = urlParam.get('bottom');
                 param.autoClose = urlParam.get('auto-close');
@@ -205,7 +203,25 @@
         
                 searchTermsTitle.push(linkTitleText);
                 searchTermsID.push(linkID);
+
             });
+
+
+            //
+            // Link clicks. Use scrollIntoView instead of browser default so I can hyjack the focus to the search element (if need-be).
+            //
+
+            const jumpToLink = navWrapperEl.querySelectorAll('.jump-to-nav__link');
+            jumpToLink.forEach((item) => {
+                item.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const targetID = item.getAttribute('href').replace('#', '');
+                    document.getElementById(targetID).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
 
             if (param.search !== null) {
                 // Thanks to autoComplete.js and js CDN. Project repo: https://github.com/TarekRaafat/autoComplete.js
@@ -233,35 +249,22 @@
                                     
                                     const selection = feedback.selection.value;
                                     autoCompleteJS.input.value = selection;
+                                    autoCompleteJS.input.select();
                                     
                                     const associatedLink = navWrapperEl.querySelector(`[href="#${searchTermsID[findIndex(autoCompleteJS.data.src, selection)]}"]`)
                                     associatedLink.click();
-
-                                    var scrollTimeout;
-                                    // addEventListener('scroll', function(e) {
-                                    //     clearTimeout(scrollTimeout);
-                                    //     scrollTimeout = setTimeout(function() {
-                                    //         autoCompleteJS.input.focus();
-                                    //     }, 50);
-                                    // });
                                 },
                                 keyup(event) {
                                     if (event.key === 'Enter') {
                                         const firstSuggestion = navWrapperEl.querySelector(`#autoComplete_result_0`);
                                         firstSuggestion.click();
+                                        autoCompleteJS.input.select();
                                     }
                                 },
                             },
                         },
                     });
                     searchEl.classList.remove('jump-to-nav__search--loading');
-
-                    function searchScroll() {
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(function() {
-                            autoCompleteJS.input.focus();
-                        }, 50);
-                    };
                 };
                 script.src = autoCompleteLinkage;
                 document.head.appendChild(script);
@@ -309,25 +312,6 @@
                     const siblingUl = item.parentNode.lastChild;
             
                     siblingUl.appendChild(item);
-                });
-            }
-
-        
-            //
-            // Add smooth scroll when using jump to nav
-            //
-        
-            if (param.smoothScroll !== null) {
-                const navAnchor = navItem.querySelectorAll('.jump-to-nav__item > a');
-        
-                navAnchor.forEach((item, index) => {
-                    item.addEventListener('click', function (event) {
-                        document.documentElement.classList.add('js-jump-to-nav-smooth-scroll');
-                        
-                        setTimeout(() => {
-                            document.documentElement.classList.remove('js-jump-to-nav-smooth-scroll');
-                        }, 400);
-                    });
                 });
             }
         
@@ -418,7 +402,7 @@
             const navItem = document.querySelector(navEl);
             const options = {
                 root: null,
-                rootMargin: '0px',
+                rootMargin: '0px 0px -20% 0px',
                 threshold: 0.5
             }
             
