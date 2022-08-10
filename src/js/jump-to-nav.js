@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.1.9
+    * Jump to navigation v1.2.0
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -48,6 +48,7 @@
                autoClose: null,
                heading: null,
                zIndex: null,
+               search: null,
                align: null,
                nest: null,
                css: null
@@ -63,6 +64,7 @@
                 param.autoClose = urlParam.get('auto-close');
                 param.heading = urlParam.get('heading');
                 param.zIndex = urlParam.get('z-index');
+                param.search = urlParam.get('search');
                 param.align = urlParam.get('align');
                 param.nest = urlParam.get('nest');
                 param.css = urlParam.get('css');
@@ -152,7 +154,8 @@
         
             navItem.appendChild(navList);
         
-            // let searchTermsArray = [];
+            let searchTermsTitle = [];
+            let searchTermsID = [];
             
             jumpToElement.forEach((item, index) => {
     
@@ -200,12 +203,56 @@
                     linkListItem.setAttribute('data-jump-parent', parentListItem.getAttribute('id'));    
                 }
         
-                // let searchTermsObj = {};
-                // searchTermsObj['title'] = linkTitleText;
-                // searchTermsObj['id'] = linkID;
-                // searchTermsArray.push(searchTermsObj);
+                searchTermsTitle.push(linkTitleText);
+                searchTermsID.push(linkID);
             });
-        
+
+            if (param.search !== null) {
+                // Thanks to autoComplete.js and js CDN. Project repo: https://github.com/TarekRaafat/autoComplete.js
+                const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
+                const script = document.createElement('script');
+                script.onload = function () {
+                    const autoCompleteJS = new autoComplete({
+                        placeHolder: 'Search',
+                        data: {
+                            src: searchTermsTitle
+                        },
+                        resultItem: {
+                            highlight: true,
+                        },
+                        events: {
+                            input: {
+                                focus() {
+                                    if (autoCompleteJS.input.value.length) {
+                                        autoCompleteJS.start();
+                                    }
+                                },
+                                selection(event) {
+                                    const feedback = event.detail;
+                                    autoCompleteJS.input.focus();
+                                    
+                                    const selection = feedback.selection.value;
+                                    autoCompleteJS.input.value = selection;
+                                    
+                                    const associatedLink = navWrapperEl.querySelector(`[href="#${searchTermsID[findIndex(autoCompleteJS.data.src, selection)]}"]`)
+                                    associatedLink.click();
+                                },
+                                keyup(event) {
+                                    if (event.key === 'Enter') {
+                                        const firstSuggestion = navWrapperEl.querySelector(`#autoComplete_result_0`);
+                                        firstSuggestion.click();
+                                    }
+                                }
+                            },
+                        },
+                    });
+                };
+                script.src = autoCompleteLinkage;
+                document.head.appendChild(script);
+            } else {
+                document.querySelector('.jump-to-nav__search').remove();
+            }
+
         
             //
             // Nest li(s) if jumpToElement is nested
@@ -248,7 +295,7 @@
                     siblingUl.appendChild(item);
                 });
             }
-    
+
         
             //
             // Add smooth scroll when using jump to nav
@@ -374,6 +421,7 @@
             }
         }
     
+
         //
         // Camel case string
         //
@@ -384,5 +432,18 @@
                 return index === 0 ? match.toLowerCase() : match.toUpperCase();
             });
         }
+
+
+        //
+        // Find index of array item
+        //
+
+        function findIndex(arr, searchValue ){
+            for (let i = 0; i < arr.length; ++i) {
+                if (arr[i] === searchValue) {
+                    return i;
+                }
+             }
+         }
     });
 })();
