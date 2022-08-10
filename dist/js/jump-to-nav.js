@@ -265,7 +265,7 @@
                                     associatedLink.click();
                                 },
                                 keyup(event) {
-                                    if (event.key === 'Enter') {
+                                    if (event.key === 'Enter' && !navWrapperEl.querySelector(`[aria-selected="true"]`)) {
                                         const firstSuggestion = navWrapperEl.querySelector(`#autoComplete_result_0`);
                                         firstSuggestion.click();
                                         autoCompleteJS.input.select();
