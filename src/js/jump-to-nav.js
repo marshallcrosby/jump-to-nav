@@ -31,7 +31,7 @@
     
     const jumpToElement = document.querySelectorAll('[data-jtn-anchor]');
 
-    if (jumpToElement !== null) {
+    if (jumpToElement.length) {
 
         /* --------------------------------------------------------------------------
             Query params
@@ -165,7 +165,7 @@
                 const semiColonSplit = item.getAttribute('data-jtn-anchor').split(';');
                 
                 // Assign option values if any
-                semiColonSplit.forEach(function (item, index) {
+                semiColonSplit.forEach((item, index) => {
                     if (semiColonSplit[index].split('title:')[1] !== undefined) {
                         options.title = parseOption(semiColonSplit[index], 'title');
                     }
@@ -222,11 +222,11 @@
         });
 
 
+        const searchEl = document.querySelector('.jump-to-nav__search');
         if (param.search !== null) {
             // Thanks to autoComplete.js and js CDN. Project repo: https://github.com/TarekRaafat/autoComplete.js
             const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
             const script = document.createElement('script');
-            const searchEl = document.querySelector('.jump-to-nav__search');
             script.onload = function () {
                 const autoCompleteJS = new autoComplete({
                     placeHolder: 'Search',
