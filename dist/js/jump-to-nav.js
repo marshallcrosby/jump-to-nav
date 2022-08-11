@@ -228,6 +228,7 @@
                 document.getElementById(targetID).scrollIntoView({
                     behavior: 'smooth'
                 });
+                history.pushState(null, null, `#${targetID}`);
             });
         });
 
