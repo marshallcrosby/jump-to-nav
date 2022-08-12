@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.2.5
+    * Jump to navigation v1.3.0
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -95,7 +95,7 @@
         //
     
         const navWrapperEl = document.createElement('div');
-        navWrapperEl.classList.add('jump-to-nav-wrapper');
+        navWrapperEl.classList.add('jump-to-nav');
     
         const HTML = `//import _jump-to-nav.html`;
         navWrapperEl.innerHTML = HTML;
@@ -124,7 +124,7 @@
 
             if (alignment !== '') {
                 alignment.forEach((item) => {
-                    navWrapperEl.classList.add('jump-to-nav-wrapper--align-' + item);
+                    navWrapperEl.classList.add('jump-to-nav--align-' + item);
                 });
             }
         }
@@ -323,13 +323,13 @@
         const maximizeButton = navWrapperEl.querySelector('.jump-to-nav__maximize');
     
         maximizeButton.addEventListener('click', function () {
-            navWrapperEl.classList.add('jump-to-nav-wrapper--showing');
+            navWrapperEl.classList.add('jump-to-nav--showing');
         });
     
         const minimizeButton = navWrapperEl.querySelector('.jump-to-nav__minimize');
     
         minimizeButton.addEventListener('click', function () {
-            navWrapperEl.classList.remove('jump-to-nav-wrapper--showing');
+            navWrapperEl.classList.remove('jump-to-nav--showing');
         });
     
 
@@ -344,7 +344,7 @@
         //
 
         if (param.activeSections !== null) {
-            activeSection('[data-jtn-anchor]', '.jump-to-nav-wrapper');
+            activeSection('[data-jtn-anchor]', '.jump-to-nav');
         }
 
 
@@ -356,7 +356,7 @@
             document.addEventListener('click', function (event) {
                 const withinBoundaries = event.composedPath().includes(navWrapperEl);
                 
-                if (navWrapperEl.classList.contains('jump-to-nav-wrapper--showing')) {
+                if (navWrapperEl.classList.contains('jump-to-nav--showing')) {
                     if (!withinBoundaries) {
                         minimizeButton.click();
                     }
