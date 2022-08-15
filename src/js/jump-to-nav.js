@@ -165,7 +165,7 @@
                 const semiColonSplit = item.getAttribute('data-jtn-anchor').split(';');
                 
                 // Assign option values if any
-                semiColonSplit.forEach(function (item, index) {
+                semiColonSplit.forEach((item, index) => {
                     if (semiColonSplit[index].split('title:')[1] !== undefined) {
                         options.title = parseOption(semiColonSplit[index], 'title');
                     }
