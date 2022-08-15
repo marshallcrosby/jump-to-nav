@@ -31,7 +31,7 @@
     
     const jumpToElement = document.querySelectorAll('[data-jtn-anchor]');
 
-    if (jumpToElement !== null) {
+    if (jumpToElement.length) {
 
         /* --------------------------------------------------------------------------
             Query params
