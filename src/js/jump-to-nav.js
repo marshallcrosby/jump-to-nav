@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.0
+    * Jump to navigation v1.3.1
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -223,11 +223,11 @@
         });
 
 
+        const searchEl = document.querySelector('.jump-to-nav__search');
         if (param.search !== null) {
             // Thanks to autoComplete.js and js CDN. Project repo: https://github.com/TarekRaafat/autoComplete.js
             const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
             const script = document.createElement('script');
-            const searchEl = document.querySelector('.jump-to-nav__search');
             script.onload = function () {
                 const autoCompleteJS = new autoComplete({
                     placeHolder: 'Search',
