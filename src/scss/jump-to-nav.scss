@@ -240,12 +240,18 @@
             &.jump-to-nav__search--loading {
                 visibility: hidden;
             }
+
+            &.jump-to-nav__search--has-value {
+                .jump-to-nav__search-clear {
+                    display: flex;
+                }
+            }
         }
     
         .jump-to-nav__search-icon {
             position: absolute;
             top: 50%;
-            left: 13px;
+            left: 12px;
     
             width: 12px;
             height: 12px;
@@ -256,11 +262,36 @@
                 fill: var(--jtn-color-text);
             }
         }
+
+        .jump-to-nav__search-clear {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 30px;
+            height: calc(100% - 4px);
+            background-color: var(--jtn-gray-50);
+            background: linear-gradient(90deg, rgba(#f3f3f3, 0) 0, var(--jtn-gray-50) 25%);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            cursor: pointer;
+            border: 0;
+
+            svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            path {
+                fill: var(--jtn-color-text);
+            }
+        }
     
         .jump-to-nav__search-input[type="text"] {
             width: 100%;
             margin: 0;
-            padding: var(--jtn-padding-y-common) 0 var(--jtn-padding-y-common) 32px;
+            padding: var(--jtn-padding-y-common) 2px var(--jtn-padding-y-common) 32px;
     
             border: 0;
             border-radius: var(--jtn-border-radius-small);
@@ -323,6 +354,16 @@
     
                 background-color: var(--jtn-gray-100);
             }
+
+            &[aria-expanded="true"] {
+                li:not([aria-selected="true"]):first-child {
+                    background-color: var(--jtn-gray-50);
+                }
+            }
+
+            [aria-activedescendant*="autoComplete_result_"] + ul li:not([aria-selected="true"]):first-child {
+                background-color: transparent;
+            }
     
             [aria-selected="true"] {
                 color: var(--jtn-color-bg);
@@ -332,6 +373,7 @@
                     color: var(--jtn-color-bg);
                     background-color: var(--jtn-color-highlight);
                 }
+
             }
         }
     }

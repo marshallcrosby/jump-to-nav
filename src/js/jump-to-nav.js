@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.1
+    * Jump to navigation v1.3.2
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -205,31 +205,18 @@
 
         });
 
-
-        //
-        // Link clicks. Use scrollIntoView instead of browser default so I can hyjack the focus to the search element (if need-be).
-        //
-
-        const jumpToLink = navWrapperEl.querySelectorAll('.jump-to-nav__link');
-        jumpToLink.forEach((item) => {
-            item.addEventListener('click', function (event) {
-                event.preventDefault();
-                const targetID = item.getAttribute('href').replace('#', '');
-                document.getElementById(targetID).scrollIntoView({
-                    behavior: 'smooth'
-                });
-                history.pushState(null, null, `#${targetID}`);
-            });
-        });
-
-
+        
         const searchEl = document.querySelector('.jump-to-nav__search');
+        const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
+
         if (param.search !== null) {
-            // Thanks to autoComplete.js and js CDN. Project repo: https://github.com/TarekRaafat/autoComplete.js
+            
+            // Thanks to autoComplete.js. Project repo: https://github.com/TarekRaafat/autoComplete.js
             const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
             const script = document.createElement('script');
             script.onload = function () {
                 const autoCompleteJS = new autoComplete({
+                    selector: "#jumpToNavAutoComplete",
                     placeHolder: 'Search',
                     data: {
                         src: searchTermsTitle
@@ -264,6 +251,22 @@
                         },
                     },
                 });
+                
+                searchInput.addEventListener('input', () => {
+                    if (searchInput && searchInput.value) {
+                        searchEl.classList.add('jump-to-nav__search--has-value');
+                    } else {
+                        searchEl.classList.remove('jump-to-nav__search--has-value');
+                    }
+                });
+
+                const searchClear = searchEl.querySelector('.jump-to-nav__search-clear');
+                searchClear.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchEl.classList.remove('jump-to-nav__search--has-value');
+                    searchInput.focus();
+                })
+
                 searchEl.classList.remove('jump-to-nav__search--loading');
             };
             script.src = autoCompleteLinkage;
@@ -271,6 +274,30 @@
         } else {
             searchEl.remove();
         }
+
+        //
+        // Link clicks. Use scrollIntoView instead of browser default so I can hyjack the focus to the search element (if need-be).
+        //
+
+        const jumpToLink = navWrapperEl.querySelectorAll('.jump-to-nav__link');
+        
+        jumpToLink.forEach((item) => {
+            item.addEventListener('click', function (event) {
+                event.preventDefault();
+                const targetID = item.getAttribute('href').replace('#', '');
+                
+                document.getElementById(targetID).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                history.pushState(null, null, `#${targetID}`);
+                
+                if (searchEl) {
+                    searchInput.value = item.innerText;
+                    searchEl.classList.add('jump-to-nav__search--has-value');
+                }
+            });
+        });
 
     
         //
