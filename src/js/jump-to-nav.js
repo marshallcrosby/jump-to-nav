@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.2
+    * Jump to navigation v1.3.3
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -42,6 +42,7 @@
         const param = {
             activeSections: null,
             topLocation: null,
+            linkCopy: null,
             bottomLocation: null,
             autoClose: null,
             heading: null,
@@ -57,6 +58,7 @@
             
             param.activeSections = urlParam.get('active-section');
             param.topLocation = urlParam.get('top');
+            param.linkCopy = urlParam.get('link-copy');
             param.bottomLocation = urlParam.get('bottom');
             param.autoClose = urlParam.get('auto-close');
             param.heading = urlParam.get('heading');
@@ -145,11 +147,11 @@
         // Setup elements and add li and links
         //
     
-        const navItem = document.querySelector('.jump-to-nav__nav');
+        const navElement = document.querySelector('.jump-to-nav__nav');
         const navList = document.createElement('ul');
         navList.classList.add('jump-to-nav__list');
     
-        navItem.appendChild(navList);
+        navElement.appendChild(navList);
     
         let searchTermsTitle = [];
         let searchTermsID = [];
@@ -187,7 +189,9 @@
                 
             const linkTitleText = (options.title !== null) ? options.title : linkID;
             const linkATag = `
-                <a class="jump-to-nav__link" href="#${ linkID }">${ linkTitleText }</a>
+                <a class="jump-to-nav__link" href="#${ linkID }">
+                    <span>${linkTitleText}</span>
+                </a>
             `;
     
             linkListItem.innerHTML = linkATag;
@@ -204,6 +208,48 @@
             searchTermsID.push(linkID);
 
         });
+
+        
+        //
+        // Add copy button to each anchor link
+        //
+
+        const itemControls = navElement.querySelector('.jump-to-nav__item-controls');
+        
+        if (param.linkCopy !== null) {
+            const navListItem = navList.querySelectorAll('li');
+            
+            navListItem.forEach((item) => {
+                item.appendChild(itemControls.cloneNode(true));
+            });
+            
+            itemControls.remove();
+
+            const linkCopyButtonEl = navList.querySelectorAll('.jump-to-nav__copy-button');
+
+            linkCopyButtonEl.forEach((item) => {
+                item.addEventListener('click', () => {
+                    const linkHash = item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__link').getAttribute('href');
+                    const currentUrl = window.location.href.split('#');
+                   
+                    navigator.clipboard.writeText(currentUrl[0] + linkHash);
+                    item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__copy-bubble').innerText = 'Copied';
+                });
+
+                item.addEventListener('mouseout', function () {
+                    let itemBubble = item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__copy-bubble');
+                    let itemBubbleText = itemBubble.innerText.toLowerCase();
+                    
+                    if (itemBubbleText.includes('copied')) {
+                        setTimeout(function () {
+                            itemBubble.innerText = 'Copy link';
+                        }, 100);
+                    }
+                });
+            });
+        } else {
+            itemControls.remove();
+        }
 
         
         const searchEl = document.querySelector('.jump-to-nav__search');
@@ -305,10 +351,10 @@
         //
     
         if (param.nest !== null) {
-            const linkChildren = navItem.querySelectorAll('[data-jump-parent]');
+            const linkChildren = navElement.querySelectorAll('[data-jump-parent]');
     
             linkChildren.forEach((item, index) => {
-                const parentItem = navItem.querySelector('[data-jump-id="' + item.getAttribute('data-jump-parent') + '"]');
+                const parentItem = navElement.querySelector('[data-jump-id="' + item.getAttribute('data-jump-parent') + '"]');
         
                 parentItem.appendChild(item);
             });
@@ -318,7 +364,7 @@
             // Add ul inside items with children
             //
             
-            const nestedChildren = navItem.querySelectorAll('[data-jump-id]');
+            const nestedChildren = navElement.querySelectorAll('[data-jump-id]');
             
             nestedChildren.forEach((item, index) => {
                 if (item.querySelector('[data-jump-parent]')) {
@@ -333,7 +379,7 @@
             // Move unwrapped list items into ul
             //
         
-            const unwrapListItems = navItem.querySelectorAll('[data-jump-id] > [data-jump-id]');
+            const unwrapListItems = navElement.querySelectorAll('[data-jump-id] > [data-jump-id]');
         
             unwrapListItems.forEach((item, index) => {
                 const siblingUl = item.parentNode.lastChild;
@@ -426,7 +472,7 @@
 
     function activeSection(sectionsEl, navEl) {
         const jumpToElement = document.querySelectorAll(sectionsEl);
-        const navItem = document.querySelector(navEl);
+        const navElement = document.querySelector(navEl);
         const options = {
             root: null,
             rootMargin: '0px 0px -20% 0px',
@@ -436,9 +482,9 @@
         const observer = new IntersectionObserver( (items, observer) => {
             for (let i = 0; i < items.length; i++) {
                 if (items[i].isIntersecting) {
-                    navItem.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
+                    navElement.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
                 } else {
-                    navItem.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.remove('jump-to-nav__item--active');
+                    navElement.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.remove('jump-to-nav__item--active');
                 }
             }
         }, options);
