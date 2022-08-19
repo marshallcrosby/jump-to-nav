@@ -103,12 +103,12 @@ gulp.task('sass', function (done) {
 
     return gulp.src([`${roots.src}/scss/jump-to-nav.scss`])
         .pipe(sourcemaps.init())
+        .pipe(gulp.dest(`${roots.dist}/scss`))
         .pipe(sass().on('error', sass.logError))
         .pipe(postcss(plugins))
-        .pipe(cleanCss({compatibility: 'ie11'}))
+        .pipe(cleanCss())
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(`${roots.dist}/temp`))
-        .pipe(gulp.dest(`${roots.dist}/css`))
         .pipe(connect.reload());
 });
 
