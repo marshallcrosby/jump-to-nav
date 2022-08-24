@@ -1,6 +1,6 @@
 <div class="jump-to-nav__dialog">
-    <button class="jump-to-nav__maximize" type="button" aria-label="Maximize">
-        <svg aria-hidden="true" width="8.5px" height="14.1px" viewBox="0 0 8.5 14.1" xml:space="preserve" style="pointer-events: none;">
+    <button class="jump-to-nav__maximize" type="button" aria-label="Maximize menu">
+        <svg class="jump-to-nav__chevron-icon" width="8.5px" height="14.1px" viewBox="0 0 8.5 14.1" style="pointer-events: none;" aria-hidden="true">
             <style>
                 .maximize-polygon {
                     fill: var(--jtn-color-text);
@@ -14,8 +14,8 @@
         <div class="jump-to-nav__header">
             <div class="jump-to-nav__heading" role="heading" aria-level="1">On this page</div>
             
-            <button class="jump-to-nav__minimize" type="button" aria-label="Minimize">
-                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" xml:space="preserve" style="pointer-events: none;">
+            <button class="jump-to-nav__minimize" type="button" aria-label="Minimize menu">
+                <svg class="jump-to-nav__line-icon" viewBox="0 0 28 28" style="pointer-events: none;" aria-hidden="true">
                     <style type="text/css">
                         .minimize-line {
                             fill: none;
@@ -32,12 +32,14 @@
             
             <div class="jump-to-nav__search jump-to-nav__search--loading">
                 <input class="jump-to-nav__search-input" id="jumpToNavAutoComplete" type="text" placeholder="Search" autocomplete="off">
+                
                 <button class="jump-to-nav__search-clear" type="button" tabindex="0">
-                    <svg viewBox="0 0 320 512" aria-hidden="true">
+                    <svg class="jump-to-nav__clear-icon" viewBox="0 0 320 512" aria-hidden="true" style="pointer-events: none;" aria-hidden="true">
                         <path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/>
                     </svg>
                 </button>
-                <svg class="jump-to-nav__search-icon" viewBox="0 0 512 512" aria-hidden="true">
+                
+                <svg class="jump-to-nav__search-icon" viewBox="0 0 512 512" aria-hidden="true" style="pointer-events: none;" aria-hidden="true">
                     <path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"/>
                 </svg>
             </div>
@@ -47,7 +49,7 @@
             <nav class="jump-to-nav__nav">
                 <div class="jump-to-nav__item-controls">
                     <button class="jump-to-nav__copy-button" type="button" aria-label="Copy link">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                        <svg class="jump-to-nav__link-icon" viewBox="0 0 640 512" style="pointer-events: none;" aria-hidden="true">
                             <path d="M172.5 131.1C228.1 75.51 320.5 75.51 376.1 131.1C426.1 181.1 433.5 260.8 392.4 318.3L391.3 319.9C381 334.2 361 337.6 346.7 327.3C332.3 317 328.9 297 339.2 282.7L340.3 281.1C363.2 249 359.6 205.1 331.7 177.2C300.3 145.8 249.2 145.8 217.7 177.2L105.5 289.5C73.99 320.1 73.99 372 105.5 403.5C133.3 431.4 177.3 435 209.3 412.1L210.9 410.1C225.3 400.7 245.3 404 255.5 418.4C265.8 432.8 262.5 452.8 248.1 463.1L246.5 464.2C188.1 505.3 110.2 498.7 60.21 448.8C3.741 392.3 3.741 300.7 60.21 244.3L172.5 131.1zM467.5 380C411 436.5 319.5 436.5 263 380C213 330 206.5 251.2 247.6 193.7L248.7 192.1C258.1 177.8 278.1 174.4 293.3 184.7C307.7 194.1 311.1 214.1 300.8 229.3L299.7 230.9C276.8 262.1 280.4 306.9 308.3 334.8C339.7 366.2 390.8 366.2 422.3 334.8L534.5 222.5C566 191 566 139.1 534.5 108.5C506.7 80.63 462.7 76.99 430.7 99.9L429.1 101C414.7 111.3 394.7 107.1 384.5 93.58C374.2 79.2 377.5 59.21 391.9 48.94L393.5 47.82C451 6.731 529.8 13.25 579.8 63.24C636.3 119.7 636.3 211.3 579.8 267.7L467.5 380z"/>
                         </svg>
                     </button>

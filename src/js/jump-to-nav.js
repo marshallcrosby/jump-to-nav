@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.3.1
+    * Jump to navigation v1.3.4
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -22,6 +22,7 @@
     ✓ 6. Dynamic IDs if none
     7. Better verbiage/names
     8. Direction of menu opening
+    9. Polish up a11y
 -------------------------------------------------------------------------------- */
 
 
@@ -40,6 +41,7 @@
         const scriptLinkage = document.getElementById('jump-to-nav-js') || document.querySelector('script[src*=jump-to-nav]');
         
         const param = {
+            collapseNested: null,
             activeSections: null,
             topLocation: null,
             linkCopy: null,
@@ -56,6 +58,7 @@
         if (scriptLinkage) {
             const urlParam = new URLSearchParams(scriptLinkage.getAttribute('src').split('?')[1]);
             
+            param.collapseNested = urlParam.get('collapse-nested');
             param.activeSections = urlParam.get('active-section');
             param.topLocation = urlParam.get('top');
             param.linkCopy = urlParam.get('link-copy');
@@ -436,6 +439,10 @@
                 }
             });
         }
+
+        if (param.collapseNested !== null && param.activeSections !== null) {
+            navWrapperEl.classList.add('jump-to-nav--collapse-nested');
+        }
     }
 
     /* --------------------------------------------------------------------------
@@ -475,7 +482,7 @@
         const navElement = document.querySelector(navEl);
         const options = {
             root: null,
-            rootMargin: '0px 0px -20% 0px',
+            rootMargin: '0px 0px -20%',
             threshold: 0.5
         }
         
@@ -516,6 +523,6 @@
             if (arr[i] === searchValue) {
                 return i;
             }
-            }
         }
+    }
 })();

@@ -503,4 +503,25 @@
             }
         }
     }
+
+    &.jump-to-nav--collapse-nested {
+        .jump-to-nav__nested-list {
+            height: 0;
+            overflow: hidden;
+        }
+
+        .jump-to-nav__item--active {
+            .jump-to-nav__nested-list {
+                height: auto;
+                overflow: visible;
+            }
+        }
+
+        .jump-to-nav__nested-list {
+            &:has(.jump-to-nav__item--active) {
+                height: auto;
+                overflow: visible;
+            }
+        }
+    }
 }
