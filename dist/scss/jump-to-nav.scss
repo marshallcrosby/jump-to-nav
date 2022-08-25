@@ -1,13 +1,14 @@
 :root {
 
     // Base
+    --jtn-top-location: 100px;
     --jtn-idle-width: 40px;
     --jtn-base-font-size: 16px;
     --jtn-small-font-size: 12.5px;
     --jtn-ff-primary: 'Helvetica Neue', Helvetica, Arial, sans-serif;;
     --jtn-space-common: 13px;
-    --jtn-border-radius-small: 4px;
-    --jtn-border-radius-large: 12px;
+    --jtn-border-radius-small: 7px;
+    --jtn-border-radius-large: calc(var(--jtn-border-radius-small) * 2);
     --jtn-dialog-width: 240px;
     --jtn-padding-y-common: 10px;
     --jtn-padding-x-common: 16px;
@@ -35,7 +36,7 @@
 
 .jump-to-nav {
     position: fixed;
-    top: 100px;
+    top: var(--jtn-top-location);
     right: 18px;
 
     pointer-events: none;

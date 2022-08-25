@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.4
+    * Jump to navigation v1.3.5
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -107,7 +107,7 @@
         document.body.appendChild(navWrapperEl);
 
         if (param.topLocation !== null) {
-            navWrapperEl.style.top = param.topLocation;
+            document.documentElement.style.setProperty('--jtn-top-location', param.topLocation);
         }
         
         if (param.bottomLocation !== null) {
@@ -488,10 +488,10 @@
         
         const observer = new IntersectionObserver( (items, observer) => {
             for (let i = 0; i < items.length; i++) {
-                if (items[i].isIntersecting) {
-                    navElement.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
-                } else {
+                if (!items[i].isIntersecting) {
                     navElement.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.remove('jump-to-nav__item--active');
+                } else {
+                    navElement.querySelector('[data-jump-id="' + items[i].target.getAttribute('id') + '"]').classList.add('jump-to-nav__item--active');
                 }
             }
         }, options);
