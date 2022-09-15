@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.5
+    * Jump to navigation v1.3.6
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -50,6 +50,8 @@
             heading: null,
             zIndex: null,
             search: null,
+            showSearchAfter: null,
+            searchFocus: null,
             align: null,
             nest: null,
             css: null
@@ -67,6 +69,8 @@
             param.heading = urlParam.get('heading');
             param.zIndex = urlParam.get('z-index');
             param.search = urlParam.get('search');
+            param.showSearchAfter = urlParam.get('show-search-after');
+            param.searchFocus = urlParam.get('search-focus');
             param.align = urlParam.get('align');
             param.nest = urlParam.get('nest');
             param.css = urlParam.get('css');
@@ -257,12 +261,14 @@
         
         const searchEl = document.querySelector('.jump-to-nav__search');
         const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
+        const navItem = navElement.querySelectorAll('.jump-to-nav__item');
 
-        if (param.search !== null) {
+        if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter) ) {
             
             // Thanks to autoComplete.js. Project repo: https://github.com/TarekRaafat/autoComplete.js
             const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
             const script = document.createElement('script');
+            
             script.onload = function () {
                 const autoCompleteJS = new autoComplete({
                     selector: "#jumpToNavAutoComplete",
@@ -335,16 +341,19 @@
                 event.preventDefault();
                 const targetID = item.getAttribute('href').replace('#', '');
                 
+                scrollParentToChild(document.querySelector('.jump-to-nav__body'), item);
+
                 document.getElementById(targetID).scrollIntoView({
                     behavior: 'smooth'
                 });
-                
+
                 history.pushState(null, null, `#${targetID}`);
                 
                 if (searchEl) {
                     searchInput.value = item.innerText;
                     searchEl.classList.add('jump-to-nav__search--has-value');
                 }
+
             });
         });
 
@@ -400,6 +409,12 @@
     
         maximizeButton.addEventListener('click', function () {
             navWrapperEl.classList.add('jump-to-nav--showing');
+
+            if (param.searchFocus !== null) {
+                setTimeout(function () {
+                    searchInput.focus();
+                }, 300);
+            }
         });
     
         const minimizeButton = navWrapperEl.querySelector('.jump-to-nav__minimize');
@@ -412,6 +427,7 @@
         //       
         // Run max height function
         //
+
         setMaxHeight(navWrapperEl);
 
 
@@ -522,6 +538,34 @@
         for (let i = 0; i < arr.length; ++i) {
             if (arr[i] === searchValue) {
                 return i;
+            }
+        }
+    }
+
+
+    //
+    // Scroll to inside div
+    //
+
+    function scrollParentToChild(parent, child) {
+        const parentRect = parent.getBoundingClientRect();
+        const childRect = child.getBoundingClientRect();
+        
+        const parentViewableArea = {
+            height: parent.clientHeight,
+            width: parent.clientWidth
+        };
+      
+        const isViewable = (childRect.top >= parentRect.top) && (childRect.bottom <= parentRect.top + parentViewableArea.height);
+      
+        if (!isViewable) {
+            const scrollTop = childRect.top - parentRect.top;
+            const scrollBottom = childRect.bottom - parentRect.bottom;
+            
+            if (Math.abs(scrollTop) < Math.abs(scrollBottom)) {
+                parent.scrollTop += scrollTop - 60;
+            } else {
+                parent.scrollTop += scrollBottom + 60;
             }
         }
     }
