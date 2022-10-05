@@ -34,6 +34,12 @@
 
     if (jumpToElement.length) {
 
+        Element.prototype.setAttributes = function (attrs) {
+            for(let key in attrs) {
+                this.setAttribute(key, attrs[key]);
+            }
+        };
+
         /* --------------------------------------------------------------------------
             Query params
         ---------------------------------------------------------------------------- */
@@ -255,7 +261,7 @@
                 });
             });
         } else {
-            itemControls.remove();
+            navElement.querySelectorAll('.jump-to-nav__copy-button, .jump-to-nav__copy-bubble').forEach(item => item.remove());
         }
 
         
@@ -367,6 +373,7 @@
     
             linkChildren.forEach((item, index) => {
                 const parentItem = navElement.querySelector('[data-jump-id="' + item.getAttribute('data-jump-parent') + '"]');
+                parentItem.classList.add('jump-to-nav__item--parent');
         
                 parentItem.appendChild(item);
             });
@@ -380,7 +387,8 @@
             
             nestedChildren.forEach((item, index) => {
                 if (item.querySelector('[data-jump-parent]')) {
-                    var childUl = document.createElement('ul');
+                    
+                    const childUl = document.createElement('ul');
                     childUl.classList.add('jump-to-nav__nested-list')
                     item.appendChild(childUl);
                 }
@@ -398,6 +406,55 @@
         
                 siblingUl.appendChild(item);
             });
+
+
+            if (param.collapseNested !== null) {
+
+                //
+                // Children expand button
+                //
+
+                const navListItem = navList.querySelectorAll('li');
+            
+                navListItem.forEach((item) => {
+                    item.appendChild(itemControls.cloneNode(true));
+                });
+    
+                const childrenControls = navElement.querySelectorAll('.jump-to-nav__item--parent > .jump-to-nav__item-controls');
+                
+                childrenControls.forEach((item, index) => {
+                    const expandButton = document.createElement('div');
+                    expandButton.classList.add('jump-to-nav__expand-button');
+                    expandButton.setAttributes({
+                        'role': 'button',
+                        'aria-label': 'Show',
+                        'aria-expanded': 'false',
+                        'tabindex': '0'
+                    });
+                    expandButton.innerHTML = /* html */`
+                        <svg version="1.1" x="0px" y="0px" viewBox="0 0 14.1 8.5" style="enable-background:new 0 0 14.1 8.5;" xml:space="preserve">
+                            <polygon points="7.1,8.5 14.1,1.4 12.7,0 7.1,5.7 1.4,0 0,1.4 7.1,8.5 "/>
+                        </svg>
+                    `;
+                    item.appendChild(expandButton);
+    
+                    expandButton.addEventListener('click', function () {
+                        if (this.getAttribute('aria-expanded') === 'false') {
+                            this.setAttribute('aria-expanded', 'true');
+                            this
+                                .closest('.jump-to-nav__item')
+                                .querySelector('.jump-to-nav__nested-list')
+                                .classList.add('jump-to-nav__nested-list--showing');
+                        } else {
+                            this.setAttribute('aria-expanded', 'false');
+                            this
+                                .closest('.jump-to-nav__item')
+                                .querySelector('.jump-to-nav__nested-list')
+                                .classList.remove('jump-to-nav__nested-list--showing');
+                        }
+                    });
+                });
+            }
         }
     
     
@@ -485,9 +542,23 @@
             });
         }
 
-        if (param.collapseNested !== null && param.activeSections !== null) {
+        if (param.collapseNested !== null) {
             navWrapperEl.classList.add('jump-to-nav--collapse-nested');
         }
+
+
+        //
+        // Make div with role=button act like an actual button for a11y reasons
+        //
+        
+        document.querySelectorAll('div[role="button"]').forEach((item) => {
+            item.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.code === 'Space') {
+                    event.preventDefault();
+                    this.click();
+                }
+            });
+        });
     }
 
     /* --------------------------------------------------------------------------

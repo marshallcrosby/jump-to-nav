@@ -13,6 +13,7 @@
     --jtn-padding-y-common: 10px;
     --jtn-padding-x-common: 16px;
     --jtn-link-spacing: 7px;
+    --jtn-button-size: 23px;
 
     // Colors
     --jtn-color-bg: #fff;
@@ -128,6 +129,7 @@
             height: 28px;
             margin-left: auto;
             padding: 0;
+            margin-right: -7px;
 
             cursor: pointer;
 
@@ -149,6 +151,41 @@
         .jump-to-nav__list {
             margin-top: 0;
             margin-left: -10px;
+        }
+
+        .jump-to-nav__nested-list {
+            &.jump-to-nav__nested-list--showing {
+                height: auto;
+                overflow: visible;
+            }
+        }
+
+        .jump-to-nav__expand-button {
+            width: var(--jtn-button-size);
+            height: var(--jtn-button-size);
+            cursor: pointer;
+            justify-content: center;
+            align-items: center;
+            margin-left: auto;
+            border-radius: 50%;
+            display: none;
+
+            svg {
+                width: 12px;
+                height: auto;
+            }
+
+            &:hover,
+            &:focus-visible {
+                background-color: var(--jtn-gray-100);
+                opacity: 1;
+            }
+
+            &[aria-expanded="true"] {
+                svg {
+                    transform: rotate(180deg);
+                }
+            }
         }
 
         .jump-to-nav__item {
@@ -189,13 +226,19 @@
             position: absolute;
             right: -5px;
             top: -4px;
+            width: var(--jtn-button-size);
+            display: flex;
+
+            &:has(.jump-to-nav__expand-button) {
+                width: calc((var(--jtn-button-size) * 2) + 2px);
+            }
         }
 
         .jump-to-nav__copy-button {
             width: 23px;
             height: 23px;
             border: 0;
-            border-radius: 23px;
+            border-radius: 50%;
             background-color: transparent;
             padding: 0;
             display: flex;
@@ -517,18 +560,22 @@
             overflow: hidden;
         }
 
-        .jump-to-nav__item--active {
-            .jump-to-nav__nested-list {
-                height: auto;
-                overflow: visible;
-            }
+        .jump-to-nav__expand-button {
+            display: flex;
         }
 
-        .jump-to-nav__nested-list {
-            &:has(.jump-to-nav__item--active) {
-                height: auto;
-                overflow: visible;
-            }
-        }
+        // .jump-to-nav__item--active {
+        //     .jump-to-nav__nested-list {
+        //         height: auto;
+        //         overflow: visible;
+        //     }
+        // }
+
+        // .jump-to-nav__nested-list {
+        //     &:has(.jump-to-nav__item--active) {
+        //         height: auto;
+        //         overflow: visible;
+        //     }
+        // }
     }
 }
