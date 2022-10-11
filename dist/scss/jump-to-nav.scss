@@ -12,7 +12,7 @@
     --jtn-dialog-width: 240px;
     --jtn-padding-y-common: 10px;
     --jtn-padding-x-common: 16px;
-    --jtn-link-spacing: 9px;
+    --jtn-link-spacing: 7px;
     --jtn-button-size: 23px;
 
     // Colors
@@ -556,7 +556,7 @@
     }
 
     &.jump-to-nav--collapse-nested {
-        --jtn-link-spacing: 13px;
+        --jtn-link-spacing: 11px;
         
         .jump-to-nav__nested-list {
             height: 0;
