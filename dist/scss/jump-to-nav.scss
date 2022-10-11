@@ -12,7 +12,7 @@
     --jtn-dialog-width: 240px;
     --jtn-padding-y-common: 10px;
     --jtn-padding-x-common: 16px;
-    --jtn-link-spacing: 7px;
+    --jtn-link-spacing: 9px;
     --jtn-button-size: 23px;
 
     // Colors
@@ -420,6 +420,7 @@
             font-family: var(--jtn-ff-primary);
             font-size: var(--jtn-small-font-size);
             line-height: 1;
+            font-weight: normal;
     
             &:focus {
                 outline-color: var(--jtn-color-primary);
@@ -555,6 +556,8 @@
     }
 
     &.jump-to-nav--collapse-nested {
+        --jtn-link-spacing: 13px;
+        
         .jump-to-nav__nested-list {
             height: 0;
             overflow: hidden;
