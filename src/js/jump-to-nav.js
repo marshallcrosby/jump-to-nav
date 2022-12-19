@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.8
+    * Jump to navigation v1.3.9
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -359,7 +359,6 @@
                     searchInput.value = item.innerText;
                     searchEl.classList.add('jump-to-nav__search--has-value');
                 }
-
             });
         });
 
@@ -494,29 +493,32 @@
         //
 
         if (param.activeSections !== null) {
-            // activeSection('[data-jtn-anchor]', '.jump-to-nav');
 
+            // Active section. Can't use Bootstrap 5 scrollspy since it's buggy
             const sections = document.querySelectorAll('[data-jtn-anchor]');
-            const menu_links = document.querySelectorAll('.jump-to-nav__nav a');
+            const jumpToMenu = document.querySelector('.jump-to-nav__nav');
+            const menuLinks = jumpToMenu.querySelectorAll('a');
             const sectionMargin = 200;
             let currentActive = 0;
+            
+            const removeAllActive = () => {
+                const currentActive = jumpToMenu.getElementsByClassName('jump-to-nav__item--active')[0];
+                if (currentActive) {
+                    currentActive.classList.remove('jump-to-nav__item--active');
+                }
+            };
 
             const makeActive = (link) => {
-                menu_links[link].parentNode.classList.add('jump-to-nav__item--active');
+                const newActive = menuLinks[link];
+                if (newActive) {
+                    newActive.classList.add('jump-to-nav__item--active');
+                }
             };
 
-            const removeActive = (link) => {
-                menu_links[link].parentNode.classList.remove('jump-to-nav__item--active');
-            };
-
-            const removeAllActive = () => {
-                [...Array(sections.length).keys()].forEach((link) => removeActive(link));
-            };
-            
             // listen for scroll events
             window.addEventListener('scroll', () => {
                 const current = sections.length - [...sections].reverse().findIndex((section) => window.scrollY >= section.offsetTop - sectionMargin) - 1;
-
+            
                 if (current !== currentActive) {
                     removeAllActive();
                     currentActive = current;

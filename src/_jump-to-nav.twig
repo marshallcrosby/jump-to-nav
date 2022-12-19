@@ -1,5 +1,5 @@
 <div class="jump-to-nav__dialog">
-    <button class="jump-to-nav__maximize" type="button" aria-label="Maximize menu">
+    <div class="jump-to-nav__maximize" role="button" aria-label="Maximize menu"  tabindex="0">
         <svg class="jump-to-nav__chevron-icon" width="8.5px" height="14.1px" viewBox="0 0 8.5 14.1" style="pointer-events: none;" aria-hidden="true">
             <style>
                 .maximize-polygon {
@@ -8,13 +8,13 @@
             </style>
             <polygon class="maximize-polygon" points="0,7.1 7.1,14.1 8.5,12.7 2.8,7.1 8.5,1.4 7.1,0 0,7.1 0,7.1 "></polygon>
         </svg>
-    </button>
+    </div>
 
     <div class="jump-to-nav__content">
         <div class="jump-to-nav__header">
             <div class="jump-to-nav__heading" role="heading" aria-level="1">On this page</div>
             
-            <button class="jump-to-nav__minimize" type="button" aria-label="Minimize menu">
+            <div class="jump-to-nav__minimize" role="button" aria-label="Minimize menu"  tabindex="0">
                 <svg class="jump-to-nav__line-icon" viewBox="0 0 28 28" style="pointer-events: none;" aria-hidden="true">
                     <style type="text/css">
                         .minimize-line {
@@ -28,16 +28,16 @@
                     </style>
                     <line class="minimize-line" x1="9" y1="14" x2="19" y2="14"/>
                 </svg>
-            </button>
+            </div>
             
             <div class="jump-to-nav__search jump-to-nav__search--loading">
                 <input class="jump-to-nav__search-input" id="jumpToNavAutoComplete" type="text" placeholder="Search" autocomplete="off">
                 
-                <button class="jump-to-nav__search-clear" type="button" tabindex="0">
+                <div class="jump-to-nav__search-clear" role="button" tabindex="0">
                     <svg class="jump-to-nav__clear-icon" viewBox="0 0 320 512" aria-hidden="true" style="pointer-events: none;" aria-hidden="true">
                         <path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/>
                     </svg>
-                </button>
+                </div>
                 
                 <svg class="jump-to-nav__search-icon" viewBox="0 0 512 512" aria-hidden="true" style="pointer-events: none;" aria-hidden="true">
                     <path d="M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z"/>
