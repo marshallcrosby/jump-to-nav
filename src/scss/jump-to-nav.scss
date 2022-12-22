@@ -582,3 +582,31 @@
         // }
     }
 }
+
+.jump-to-nav__showonly {
+    margin-bottom: var(--jtn-space-common);
+}
+
+.jump-to-nav__label {
+    font-size: var(--jtn-small-font-size);
+    margin-bottom: 6px;
+    display: block;
+}
+
+.jump-to-nav__select {
+    display: block;
+    width: 100%;
+    padding: 7.5px 33px 7.5px 10px;
+    -moz-padding-start: calc(0.75rem - 3px);
+    font-weight: 400;
+    line-height: 1;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 12px;
+    border: 1px solid var(--jtn-gray-100);
+    border-radius: var(--jtn-border-radius-small);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    appearance: none;
+}

@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.3.9
+    * Jump to navigation v1.4.0
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -222,21 +222,31 @@
 
         });
 
+
+        //
+        // Apply controls div
+        //
+
+        const tempItemControls = navElement.querySelector('.jump-to-nav__item-controls');
+        const navListItem = navList.querySelectorAll('li');
+
+        if (param.linkCopy !== null || param.collapseNested !== null) {
+            
+            navListItem.forEach((item) => {
+                item.appendChild(tempItemControls.cloneNode(true));
+            });
+
+            tempItemControls.remove();
+        } else {
+            tempItemControls.remove();
+        }
+
         
         //
         // Add copy button to each anchor link
         //
-
-        const itemControls = navElement.querySelector('.jump-to-nav__item-controls');
         
         if (param.linkCopy !== null) {
-            const navListItem = navList.querySelectorAll('li');
-            
-            navListItem.forEach((item) => {
-                item.appendChild(itemControls.cloneNode(true));
-            });
-            
-            itemControls.remove();
 
             const linkCopyButtonEl = navList.querySelectorAll('.jump-to-nav__copy-button');
 
@@ -412,16 +422,10 @@
                 //
                 // Children expand button
                 //
-
-                const navListItem = navList.querySelectorAll('li');
-            
-                navListItem.forEach((item) => {
-                    item.appendChild(itemControls.cloneNode(true));
-                });
     
                 const childrenControls = navElement.querySelectorAll('.jump-to-nav__item--parent > .jump-to-nav__item-controls');
                 
-                childrenControls.forEach((item, index) => {
+                childrenControls.forEach((item) => {
                     const expandButton = document.createElement('div');
                     expandButton.classList.add('jump-to-nav__expand-button');
                     expandButton.setAttributes({
@@ -435,6 +439,7 @@
                             <polygon points="7.1,8.5 14.1,1.4 12.7,0 7.1,5.7 1.4,0 0,1.4 7.1,8.5 "/>
                         </svg>
                     `;
+                    
                     item.appendChild(expandButton);
     
                     expandButton.addEventListener('click', function () {
@@ -453,6 +458,8 @@
                         }
                     });
                 });
+
+                navWrapperEl.classList.add('jump-to-nav--collapse-nested');
             }
         }
     
@@ -544,8 +551,65 @@
             });
         }
 
-        if (param.collapseNested !== null) {
-            navWrapperEl.classList.add('jump-to-nav--collapse-nested');
+        
+        //
+        // Group sorting
+        //
+
+        const showGroup = document.querySelectorAll('[data-jtn-show-group]');
+        if (showGroup.length) {
+            const showSelect = navWrapperEl.querySelector('.jump-to-nav__select');
+    
+            showGroup.forEach((item) => {
+                const optionTitle = parseOption(item.getAttribute('data-jtn-show-group'), 'title');
+                const optionID = camelize('section' + optionTitle.replace(/[^a-z0-9]/gi, ' '));
+                
+                item.setAttribute('id', optionID);
+                
+                const option = document.createElement('option');
+                option.value = optionID;
+                option.innerText = optionTitle;
+                showSelect.add(option);
+
+                const childSection = item.querySelectorAll('[data-jtn-anchor]');
+                childSection.forEach((itemChild) => {
+                    navWrapperEl
+                        .querySelector('[data-jump-id="' + itemChild.id + '"]')
+                        .setAttribute('data-jtn-show-group-parent', optionID);
+                });
+            });
+    
+            showSelect.addEventListener('change', function() {
+                const showCurrentSectionID = this.value;
+                
+                showGroup.forEach((item) => {
+                    item.style.display = '';
+    
+                    if (item.id !== showCurrentSectionID) {
+                        item.style.display = 'none';
+                    }
+    
+                    if (showCurrentSectionID === 'showAll') {
+                        item.style.display = '';
+                    }
+
+                    const topLevelNavItems = navWrapperEl.querySelectorAll('[data-jtn-show-group-parent]');
+                    topLevelNavItems.forEach((itemNavItems) => {
+                        itemNavItems.style.display = '';
+
+                        if (itemNavItems.getAttribute('data-jtn-show-group-parent') !== showCurrentSectionID) {
+                            itemNavItems.style.display = 'none';
+                        }
+
+                        if (showCurrentSectionID === 'showAll') {
+                            itemNavItems.style.display = '';
+                        }
+                    });
+                });
+            });
+
+        } else {
+            navWrapperEl.querySelector('.jump-to-nav__showonly').remove();
         }
 
 
@@ -553,14 +617,24 @@
         // Make div with role=button act like an actual button for a11y reasons
         //
         
-        document.querySelectorAll('div[role="button"]').forEach((item) => {
-            item.addEventListener('keydown', function (event) {
-                if (event.key === 'Enter' || event.code === 'Space') {
-                    event.preventDefault();
-                    this.click();
-                }
+        document.querySelectorAll('.jump-to-nav__maximize, .jump-to-nav__minimize, .jump-to-nav__search-clear, .jump-to-nav__copy-button, .jump-to-nav__expand-button')
+            .forEach((item) => {
+                item.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter' || event.code === 'Space') {
+                        event.preventDefault();
+                        this.click();
+                    }
+                });
             });
-        });
+
+
+        //
+        // Remove un-needed item controls
+        //
+
+        if (param.linkCopy === null || param.collapseNested !== null) {
+            navWrapperEl.querySelectorAll('.jump-to-nav__item:not(.jump-to-nav__item--parent) .jump-to-nav__item-controls').forEach(item => item.remove())
+        }
     }
 
     /* --------------------------------------------------------------------------
