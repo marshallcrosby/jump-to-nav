@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.4.0
+    * Jump to navigation v1.4.1
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -642,7 +642,10 @@
         // Remove un-needed item controls
         //
 
-        if (param.linkCopy === null || param.collapseNested !== null) {
+        if (
+            param.linkCopy === null &&
+            param.collapseNested !== null
+        ) {
             navWrapperEl.querySelectorAll('.jump-to-nav__item:not(.jump-to-nav__item--parent) .jump-to-nav__item-controls').forEach(item => item.remove())
         }
     }
