@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.4.1
+    * Jump to navigation v1.4.2
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
