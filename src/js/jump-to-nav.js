@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.4.2
+    * Jump to navigation v1.5.0
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -165,11 +165,8 @@
         navList.classList.add('jump-to-nav__list');
     
         navElement.appendChild(navList);
-    
-        let searchTermsTitle = [];
-        let searchTermsID = [];
-        
-        jumpToElement.forEach((item, index) => {
+            
+        jumpToElement.forEach((item) => {
 
             let options = null;
             options = {
@@ -182,7 +179,7 @@
                 // Assign option values if any
                 semiColonSplit.forEach((item, index) => {
                     if (semiColonSplit[index].split('title:')[1] !== undefined) {
-                        options.title = parseOption(semiColonSplit[index], 'title');
+                        options.title = jtnParseOption(semiColonSplit[index], 'title');
                     }
                 });          
             }
@@ -216,10 +213,6 @@
                 parentListItem.setAttribute('data-jump-has-child', 'true');
                 linkListItem.setAttribute('data-jump-parent', parentListItem.getAttribute('id'));    
             }
-    
-            searchTermsTitle.push(linkTitleText);
-            searchTermsID.push(linkID);
-
         });
 
 
@@ -275,77 +268,6 @@
         }
 
         
-        const searchEl = document.querySelector('.jump-to-nav__search');
-        const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
-        const navItem = navElement.querySelectorAll('.jump-to-nav__item');
-
-        if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter) ) {
-            
-            // Thanks to autoComplete.js. Project repo: https://github.com/TarekRaafat/autoComplete.js
-            const autoCompleteLinkage = `https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@10.2.7/dist/autoComplete.min.js`;
-            const script = document.createElement('script');
-            
-            script.onload = function () {
-                const autoCompleteJS = new autoComplete({
-                    selector: "#jumpToNavAutoComplete",
-                    placeHolder: 'Search',
-                    data: {
-                        src: searchTermsTitle
-                    },
-                    resultItem: {
-                        highlight: true,
-                    },
-                    events: {
-                        input: {
-                            focus() {
-                                if (autoCompleteJS.input.value.length) {
-                                    autoCompleteJS.start();
-                                }
-                            },
-                            selection(event) {
-                                const feedback = event.detail;
-                                
-                                const selection = feedback.selection.value;
-                                autoCompleteJS.input.value = selection;
-                                autoCompleteJS.input.select();
-                                
-                                const associatedLink = navWrapperEl.querySelector(`[href="#${searchTermsID[findIndex(autoCompleteJS.data.src, selection)]}"]`)
-                                associatedLink.click();
-                            },
-                            keyup(event) {
-                                if (event.key === 'Enter' && !navWrapperEl.querySelector(`[aria-selected="true"]`)) {
-                                    const firstSuggestion = navWrapperEl.querySelector(`#autoComplete_result_0`);
-                                    firstSuggestion.click();
-                                    autoCompleteJS.input.select();
-                                }
-                            },
-                        },
-                    },
-                });
-                
-                searchInput.addEventListener('input', () => {
-                    if (searchInput && searchInput.value) {
-                        searchEl.classList.add('jump-to-nav__search--has-value');
-                    } else {
-                        searchEl.classList.remove('jump-to-nav__search--has-value');
-                    }
-                });
-
-                const searchClear = searchEl.querySelector('.jump-to-nav__search-clear');
-                searchClear.addEventListener('click', () => {
-                    searchInput.value = '';
-                    searchEl.classList.remove('jump-to-nav__search--has-value');
-                    searchInput.focus();
-                })
-
-                searchEl.classList.remove('jump-to-nav__search--loading');
-            };
-            script.src = autoCompleteLinkage;
-            document.head.appendChild(script);
-        } else {
-            searchEl.remove();
-        }
-
         //
         // Link clicks. Use scrollIntoView instead of browser default so I can hyjack the focus to the search element (if need-be).
         //
@@ -536,6 +458,130 @@
 
 
         //
+        // Search with autocomplete
+        //
+
+        const searchEl = document.querySelector('.jump-to-nav__search');
+        const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
+        const navItem = navElement.querySelectorAll('.jump-to-nav__item');
+
+        if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter) ) {
+
+            // Thanks to autoComplete.js. Project repo: https://github.com/TarekRaafat/autoComplete.js
+            //=require ../../node_modules/@tarekraafat/autocomplete.js/dist/autoComplete.js
+            
+            let jtnSearchTermsTitle = [];
+            let jtnSearchTermsID = [];
+
+            function renderDataArrays(title, id) {
+                jtnSearchTermsTitle = [];
+                jtnSearchTermsID = [];
+                
+                document.querySelectorAll('[data-jtn-anchor]').forEach((item) => {
+                    if ((item.offsetParent !== null)) {
+                        const titleText = jtnParseOption(item.getAttribute('data-jtn-anchor'), 'title');
+                
+                        jtnSearchTermsTitle.push(titleText);
+                        jtnSearchTermsID.push(item.id);
+                    }
+                });
+            
+                if (title !== null) {
+                    return jtnSearchTermsTitle;
+                } else if (id !== null) {
+                    return jtnSearchTermsID;
+                } else {
+                    return false;
+                }
+            }
+
+            var autoCompleteConstructor = function(refresh) {
+                var autoCompleteJS = new autoComplete({
+                    selector: "#jumpToNavAutoComplete",
+                    placeHolder: 'Search',
+                    data: {
+                        src: renderDataArrays(true, null)
+                    },
+                    resultItem: {
+                        highlight: true,
+                    },
+                    events: {
+                        input: {
+                            focus() {
+                                if (autoCompleteJS.input.value.length) {
+                                    autoCompleteJS.start();
+                                }
+                            },
+                            selection(event) {
+                                const feedback = event.detail;
+                                
+                                const selection = feedback.selection.value;
+                                autoCompleteJS.input.value = selection;
+                                autoCompleteJS.input.select();
+                                
+                                const associatedLink = navWrapperEl.querySelector(`[href="#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}"]`);
+
+                                if (associatedLink.closest('.jump-to-nav__item--parent')) {
+                                    const closestToggleClosedBtn = associatedLink.closest('.jump-to-nav__item--parent').querySelector('.jump-to-nav__expand-button[aria-expanded="false"]');
+                                    if (closestToggleClosedBtn) {
+                                        closestToggleClosedBtn.click();
+                                    }
+                                }
+
+                                associatedLink.click();
+                            },
+                            keyup(event) {
+                                if (event.key === 'Enter' && !navWrapperEl.querySelector(`[aria-selected="true"]`)) {
+                                    const firstSuggestion = navWrapperEl.querySelector(`#autoComplete_result_0`);
+                                    firstSuggestion.click();
+                                    autoCompleteJS.input.select();
+                                }
+                            },
+                        },
+                    },
+                });
+
+                if (refresh === 'refresh') {
+                    // Remove events
+                    autoCompleteJS.unInit();
+                    
+                    // Delete current autoComplete wrapper
+                    navWrapperEl.querySelector('.autoComplete_wrapper').remove();
+                    
+                    // Reapply autocomplete input
+                    navWrapperEl
+                        .querySelector('.jump-to-nav__input-wrapper')
+                        .innerHTML = `<input class="jump-to-nav__search-input" id="jumpToNavAutoComplete" type="text" placeholder="Search" autocomplete="off">`;
+                    
+                    // Re-run autocomplete initializer
+                    autoCompleteConstructor();
+                }
+            }
+
+            autoCompleteConstructor();
+            
+            searchInput.addEventListener('input', () => {
+                if (searchInput && searchInput.value) {
+                    searchEl.classList.add('jump-to-nav__search--has-value');
+                } else {
+                    searchEl.classList.remove('jump-to-nav__search--has-value');
+                }
+            });
+
+            const searchClear = searchEl.querySelector('.jump-to-nav__search-clear');
+            searchClear.addEventListener('click', () => {
+                searchInput.value = '';
+                searchEl.classList.remove('jump-to-nav__search--has-value');
+                searchInput.focus();
+            })
+
+            searchEl.classList.remove('jump-to-nav__search--loading');
+        } else {
+            searchEl.remove();
+        }
+
+
+        //
         // Click outside
         //
 
@@ -556,12 +602,12 @@
         // Group sorting
         //
 
-        const showGroup = document.querySelectorAll('[data-jtn-show-group]');
+        const showGroup = document.querySelectorAll('[data-jtn-group]');
         if (showGroup.length) {
             const showSelect = navWrapperEl.querySelector('.jump-to-nav__select');
     
             showGroup.forEach((item) => {
-                const optionTitle = parseOption(item.getAttribute('data-jtn-show-group'), 'title');
+                const optionTitle = jtnParseOption(item.getAttribute('data-jtn-group'), 'title');
                 const optionID = camelize('section' + optionTitle.replace(/[^a-z0-9]/gi, ' '));
                 
                 item.setAttribute('id', optionID);
@@ -575,7 +621,7 @@
                 childSection.forEach((itemChild) => {
                     navWrapperEl
                         .querySelector('[data-jump-id="' + itemChild.id + '"]')
-                        .setAttribute('data-jtn-show-group-parent', optionID);
+                        .setAttribute('data-jtn-group-id', optionID);
                 });
             });
     
@@ -593,11 +639,11 @@
                         item.style.display = '';
                     }
 
-                    const topLevelNavItems = navWrapperEl.querySelectorAll('[data-jtn-show-group-parent]');
+                    const topLevelNavItems = navWrapperEl.querySelectorAll('[data-jtn-group-id]');
                     topLevelNavItems.forEach((itemNavItems) => {
                         itemNavItems.style.display = '';
 
-                        if (itemNavItems.getAttribute('data-jtn-show-group-parent') !== showCurrentSectionID) {
+                        if (itemNavItems.getAttribute('data-jtn-group-id') !== showCurrentSectionID) {
                             itemNavItems.style.display = 'none';
                         }
 
@@ -606,6 +652,9 @@
                         }
                     });
                 });
+
+                
+                autoCompleteConstructor('refresh');
             });
 
         } else {
@@ -643,15 +692,6 @@
     /* --------------------------------------------------------------------------
         Functions
     ---------------------------------------------------------------------------- */
-
-    //
-    // Parse options (function)
-    //
-
-    function parseOption(splitOn, optionString) {
-        return splitOn.split(optionString + ':')[1].trim();
-    }
-
 
     //
     // Set height for overflow scrolling if needed
@@ -747,5 +787,14 @@
                 parent.scrollTop += scrollBottom + 60;
             }
         }
+    }
+    
+    
+    //
+    // Parse options (function)
+    //
+    
+    function jtnParseOption(splitOn, optionString) {
+        return splitOn.split(optionString + ':')[1].trim();
     }
 })();
