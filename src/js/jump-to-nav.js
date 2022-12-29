@@ -1,5 +1,5 @@
 /*!
-    * Jump to navigation v1.5.1
+    * Jump to navigation v1.5.2
     * Need description.
     *
     * Copyright 2022 Marshall Crosby
@@ -14,7 +14,7 @@
         ✓ • Make nesting an option
         ✓ • Allow custom z-index
         ✓ • Allow external css
-        • Placement (left, right, top, bottom, custom)
+        • Placement (✓ left, ✓ right, ✓ top, bottom, custom)
     ✓ 2. Click outside closes panel
     ✓ 3. CSS dynamic max-height
     ✓ 4. Focus nav item on current section in view
@@ -49,6 +49,7 @@
         const param = {
             collapseNested: null,
             activeSections: null,
+            position: null,
             topLocation: null,
             linkCopy: null,
             bottomLocation: null,
@@ -68,6 +69,7 @@
             
             param.collapseNested = urlParam.get('collapse-nested');
             param.activeSections = urlParam.get('active-section');
+            param.position = urlParam.get('position');
             param.topLocation = urlParam.get('top');
             param.linkCopy = urlParam.get('link-copy');
             param.bottomLocation = urlParam.get('bottom');
@@ -127,6 +129,26 @@
         
         if (param.zIndex !== null) {
             navWrapperEl.style.zIndex = param.zIndex;
+        }
+
+        if (param.position !== null) {
+            let navPos = param.position.split(', ').join(',');
+
+            if (navPos.includes('left')) {
+                navWrapperEl.classList.add('jump-to-nav--left');
+            }
+            
+            if (navPos.includes('bottom')) {
+                navWrapperEl.classList.add('jump-to-nav--bottom');
+            }
+            
+            if (navPos.includes('right')) {
+                navWrapperEl.classList.add('jump-to-nav--right');
+            }
+            
+            if (navPos.includes('top')) {
+                navWrapperEl.classList.add('jump-to-nav--top');
+            }
         }
 
 
