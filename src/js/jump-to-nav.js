@@ -176,13 +176,69 @@
 
             headingEl.textContent = param.heading;
         }
+
+
+        const siteNav = document.querySelector('.jump-to-nav__site-menu');
+
+        fetch('index.html')
+            .then(function(response) {
+                // When the page is loaded convert it to text
+                return response.text()
+            })
+            .then(function(html) {
+                
+                // Initialize the DOM parser
+                const parser = new DOMParser();
+        
+                // Parse the text
+                const doc = parser.parseFromString(html, "text/html");
+
+                // Cache nav lists
+                const navItems = doc.querySelectorAll('.static-site-nav');
+
+                // Add and cleanup/adjust list and list items
+                navItems.forEach(item => {
+                    const currentNavItem = item;
+                    siteNav.appendChild(currentNavItem);
+
+                    // Remove all current class attributes
+                    const allClassSelectors = currentNavItem.querySelectorAll('[class]');
+                    allClassSelectors.forEach(entry => {
+                        entry.removeAttribute('class');
+                    });
+
+                    currentNavItem.classList.add('jump-to-site-nav__list');
+
+                    const childItems = currentNavItem.querySelectorAll('li');
+                    childItems.forEach(child => {
+                        child.classList.add('jump-to-site-nav__item');
+                        child.querySelector('a').classList.add('jump-to-site-nav__link');
+
+                        const childList = child.querySelectorAll('ul');
+                        childList.forEach(list => {
+                            list.classList.add('jump-to-site-nav__nested-list');
+                            list.closest('.jump-to-site-nav__item').classList.add('jump-to-site-nav__item--parent')
+                        });
+                    });
+
+                    addCopyButtonToItem(childItems);
+
+                    linkCopyFunction(childItems);
+
+                    const childrenControls = currentNavItem.querySelectorAll('.jump-to-site-nav__item--parent > .jump-to-nav__item-controls');
+                    applyExpandDisplay(childrenControls);
+                });
+            })
+            .catch(function(err) {  
+                console.log('Failed to get navigation: ', err);  
+            });
     
     
         //
         // Setup elements and add li and links
         //
     
-        const navElement = document.querySelector('.jump-to-nav__nav');
+        const navElement = document.querySelector('.jump-to-nav__in-page');
         const navList = document.createElement('ul');
         navList.classList.add('jump-to-nav__list');
     
@@ -246,14 +302,18 @@
         const navListItem = navList.querySelectorAll('li');
 
         if (param.linkCopy !== null || param.collapseNested !== null) {
-            
-            navListItem.forEach((item) => {
-                item.appendChild(tempItemControls.cloneNode(true));
-            });
+
+            addCopyButtonToItem(navListItem);
 
             tempItemControls.remove();
         } else {
             tempItemControls.remove();
+        }
+
+        function addCopyButtonToItem(listItems) {
+            listItems.forEach((item) => {
+                item.appendChild(tempItemControls.cloneNode(true));
+            });
         }
 
         
@@ -265,17 +325,32 @@
 
             const linkCopyButtonEl = navList.querySelectorAll('.jump-to-nav__copy-button');
 
-            linkCopyButtonEl.forEach((item) => {
+            linkCopyFunction(linkCopyButtonEl);
+        } else {
+            navElement.querySelectorAll('.jump-to-nav__copy-button, .jump-to-nav__copy-bubble').forEach(item => item.remove());
+        }
+
+        function linkCopyFunction(copyBtnEls) {
+            copyBtnEls.forEach((item) => {
                 item.addEventListener('click', () => {
-                    const linkHash = item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__link').getAttribute('href');
+                    const linkHref = item.closest('li').querySelector('a').getAttribute('href');
                     const currentUrl = window.location.href.split('#');
+                    let writeUrl;
+
+                    if (linkHref.includes('#')) {
+                        writeUrl = currentUrl[0] + linkHref;
+                    }
+
+                    if (!linkHref.includes('#')) {
+                        writeUrl = window.location.hostname + linkHref
+                    }
                    
-                    navigator.clipboard.writeText(currentUrl[0] + linkHash);
-                    item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__copy-bubble').innerText = 'Copied';
+                    navigator.clipboard.writeText(writeUrl);
+                    item.closest('li').querySelector('.jump-to-nav__copy-bubble').innerText = 'Copied';
                 });
 
                 item.addEventListener('mouseout', function () {
-                    let itemBubble = item.closest('.jump-to-nav__item').querySelector('.jump-to-nav__copy-bubble');
+                    let itemBubble = item.closest('li').querySelector('.jump-to-nav__copy-bubble');
                     let itemBubbleText = itemBubble.innerText.toLowerCase();
                     
                     if (itemBubbleText.includes('copied')) {
@@ -285,13 +360,11 @@
                     }
                 });
             });
-        } else {
-            navElement.querySelectorAll('.jump-to-nav__copy-button, .jump-to-nav__copy-bubble').forEach(item => item.remove());
         }
 
         
         //
-        // Link clicks. Use scrollIntoView instead of browser default so I can hyjack the focus to the search element (if need-be).
+        // Link clicks. Use scrollIntoView instead of browser default so I can hijack the focus to the search element (if need-be).
         //
 
         const jumpToLink = navWrapperEl.querySelectorAll('.jump-to-nav__link');
@@ -369,42 +442,47 @@
     
                 const childrenControls = navElement.querySelectorAll('.jump-to-nav__item--parent > .jump-to-nav__item-controls');
                 
-                childrenControls.forEach((item) => {
-                    const expandButton = document.createElement('div');
-                    expandButton.classList.add('jump-to-nav__expand-button');
-                    expandButton.setAttributes({
-                        'role': 'button',
-                        'aria-label': 'Show',
-                        'aria-expanded': 'false',
-                        'tabindex': '0'
-                    });
-                    expandButton.innerHTML = /* html */`
-                        <svg version="1.1" x="0px" y="0px" viewBox="0 0 14.1 8.5" style="enable-background:new 0 0 14.1 8.5;" xml:space="preserve">
-                            <polygon points="7.1,8.5 14.1,1.4 12.7,0 7.1,5.7 1.4,0 0,1.4 7.1,8.5 "/>
-                        </svg>
-                    `;
-                    
-                    item.appendChild(expandButton);
-    
-                    expandButton.addEventListener('click', function () {
-                        if (this.getAttribute('aria-expanded') === 'false') {
-                            this.setAttribute('aria-expanded', 'true');
-                            this
-                                .closest('.jump-to-nav__item')
-                                .querySelector('.jump-to-nav__nested-list')
-                                .classList.add('jump-to-nav__nested-list--showing');
-                        } else {
-                            this.setAttribute('aria-expanded', 'false');
-                            this
-                                .closest('.jump-to-nav__item')
-                                .querySelector('.jump-to-nav__nested-list')
-                                .classList.remove('jump-to-nav__nested-list--showing');
-                        }
-                    });
-                });
-
-                navWrapperEl.classList.add('jump-to-nav--collapse-nested');
+                applyExpandDisplay(childrenControls);
             }
+        }
+
+        function applyExpandDisplay(controlsElement) {
+            controlsElement.forEach((item) => {
+                const expandButton = document.createElement('div');
+                expandButton.classList.add('jump-to-nav__expand-button');
+                expandButton.setAttributes({
+                    'role': 'button',
+                    'aria-label': 'Show',
+                    'aria-expanded': 'false',
+                    'tabindex': '0'
+                });
+                
+                expandButton.innerHTML = /* html */`
+                    <svg version="1.1" x="0px" y="0px" viewBox="0 0 14.1 8.5" style="enable-background:new 0 0 14.1 8.5;" xml:space="preserve">
+                        <polygon points="7.1,8.5 14.1,1.4 12.7,0 7.1,5.7 1.4,0 0,1.4 7.1,8.5 "/>
+                    </svg>
+                `;
+                
+                item.appendChild(expandButton);
+
+                expandButton.addEventListener('click', function () {
+                    if (this.getAttribute('aria-expanded') === 'false') {
+                        this.setAttribute('aria-expanded', 'true');
+                        this
+                            .closest('.jump-to-nav__item')
+                            .querySelector('.jump-to-nav__nested-list')
+                            .classList.add('jump-to-nav__nested-list--showing');
+                    } else {
+                        this.setAttribute('aria-expanded', 'false');
+                        this
+                            .closest('.jump-to-nav__item')
+                            .querySelector('.jump-to-nav__nested-list')
+                            .classList.remove('jump-to-nav__nested-list--showing');
+                    }
+                });
+            });
+
+            navWrapperEl.classList.add('jump-to-nav--collapse-nested');
         }
     
     
@@ -447,7 +525,7 @@
 
             // Active section. Can't use Bootstrap 5 scrollspy since it's buggy
             const sections = document.querySelectorAll('[data-jtn-anchor]');
-            const jumpToMenu = document.querySelector('.jump-to-nav__nav');
+            const jumpToMenu = document.querySelector('.jump-to-nav__in-page');
             const menuLinks = jumpToMenu.querySelectorAll('a');
             const sectionMargin = 200;
             let currentActive = 0;
@@ -517,8 +595,8 @@
                 }
             }
 
-            var autoCompleteConstructor = function(refresh) {
-                var autoCompleteJS = new autoComplete({
+            const autoCompleteConstructor = function(refresh) {
+                const autoCompleteJS = new autoComplete({
                     selector: "#jumpToNavAutoComplete",
                     placeHolder: 'Search',
                     data: {
