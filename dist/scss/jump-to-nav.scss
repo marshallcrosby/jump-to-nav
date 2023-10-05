@@ -141,9 +141,7 @@
         }
 
         .jump-to-nav__list,
-        .jump-to-nav__nested-list,
-        .jump-to-site-nav__list,
-        .jump-to-site-nav__nested-list {
+        .jump-to-nav__nested-list {
             margin-bottom: 0;
             padding-left: 0;
 
@@ -157,8 +155,7 @@
             margin-left: -10px;
         }
 
-        .jump-to-nav__nested-list,
-        .jump-to-site-nav__nested-list {
+        .jump-to-nav__nested-list {
             &.jump-to-nav__nested-list--showing {
                 height: auto;
                 overflow: visible;
@@ -192,8 +189,7 @@
             }
         }
 
-        .jump-to-nav__item,
-        .jump-to-site-nav__item {
+        .jump-to-nav__item {
             padding-left: 10px;
             position: relative;
             
@@ -204,8 +200,7 @@
             }
         }
         
-        .jump-to-nav__link,
-        .jump-to-site-nav__link {
+        .jump-to-nav__link {
             display: block;
             
             text-decoration: none;
@@ -621,8 +616,7 @@
     &.jump-to-nav--collapse-nested {
         --jtn-link-spacing: 11px;
         
-        .jump-to-nav__nested-list,
-        .jump-to-site-nav__nested-list {
+        .jump-to-nav__nested-list {
             height: 0;
             overflow: hidden;
         }

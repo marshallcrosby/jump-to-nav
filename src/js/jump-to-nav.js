@@ -61,7 +61,8 @@
             searchFocus: null,
             align: null,
             nest: null,
-            css: null
+            css: null,
+            siteNav: null
         }
     
         if (scriptLinkage) {
@@ -82,6 +83,7 @@
             param.align = urlParam.get('align');
             param.nest = urlParam.get('nest');
             param.css = urlParam.get('css');
+            param.siteNav = urlParam.get('site-nav');
         }
     
     
@@ -178,62 +180,6 @@
         }
 
 
-        const siteNav = document.querySelector('.jump-to-nav__site-menu');
-
-        fetch('index.html')
-            .then(function(response) {
-                // When the page is loaded convert it to text
-                return response.text()
-            })
-            .then(function(html) {
-                
-                // Initialize the DOM parser
-                const parser = new DOMParser();
-        
-                // Parse the text
-                const doc = parser.parseFromString(html, "text/html");
-
-                // Cache nav lists
-                const navItems = doc.querySelectorAll('.static-site-nav');
-
-                // Add and cleanup/adjust list and list items
-                navItems.forEach(item => {
-                    const currentNavItem = item;
-                    siteNav.appendChild(currentNavItem);
-
-                    // Remove all current class attributes
-                    const allClassSelectors = currentNavItem.querySelectorAll('[class]');
-                    allClassSelectors.forEach(entry => {
-                        entry.removeAttribute('class');
-                    });
-
-                    currentNavItem.classList.add('jump-to-site-nav__list');
-
-                    const childItems = currentNavItem.querySelectorAll('li');
-                    childItems.forEach(child => {
-                        child.classList.add('jump-to-site-nav__item');
-                        child.querySelector('a').classList.add('jump-to-site-nav__link');
-
-                        const childList = child.querySelectorAll('ul');
-                        childList.forEach(list => {
-                            list.classList.add('jump-to-site-nav__nested-list');
-                            list.closest('.jump-to-site-nav__item').classList.add('jump-to-site-nav__item--parent')
-                        });
-                    });
-
-                    addCopyButtonToItem(childItems);
-
-                    linkCopyFunction(childItems);
-
-                    const childrenControls = currentNavItem.querySelectorAll('.jump-to-site-nav__item--parent > .jump-to-nav__item-controls');
-                    applyExpandDisplay(childrenControls);
-                });
-            })
-            .catch(function(err) {  
-                console.log('Failed to get navigation: ', err);  
-            });
-    
-    
         //
         // Setup elements and add li and links
         //
@@ -303,14 +249,14 @@
 
         if (param.linkCopy !== null || param.collapseNested !== null) {
 
-            addCopyButtonToItem(navListItem);
+            addControlsElement(navListItem);
 
             tempItemControls.remove();
         } else {
             tempItemControls.remove();
         }
 
-        function addCopyButtonToItem(listItems) {
+        function addControlsElement(listItems) {
             listItems.forEach((item) => {
                 item.appendChild(tempItemControls.cloneNode(true));
             });
@@ -565,7 +511,7 @@
         const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
         const navItem = navElement.querySelectorAll('.jump-to-nav__item');
 
-        if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter) ) {
+        if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter)) {
 
             // Thanks to autoComplete.js. Project repo: https://github.com/TarekRaafat/autoComplete.js
             //=require ../../node_modules/@tarekraafat/autocomplete.js/dist/autoComplete.js
@@ -576,6 +522,19 @@
             function renderDataArrays(title, id) {
                 jtnSearchTermsTitle = [];
                 jtnSearchTermsID = [];
+
+                // Static site menu
+                const navMenuElement = document.querySelectorAll('.jump-to-nav__site-menu a');
+                if (navMenuElement) {
+                    navMenuElement.forEach(link => {
+                        const titleClean = link.textContent.replace(/[^a-z0-9]/gi, ' ');
+                        const titleReady = camelize(titleClean);
+                        link.setAttribute('id', titleReady);
+                        
+                        jtnSearchTermsTitle.push(link.textContent);
+                        jtnSearchTermsID.push(link.id);
+                    });
+                }
                 
                 document.querySelectorAll('[data-jtn-anchor]').forEach((item) => {
                     if ((item.offsetParent !== null)) {
@@ -585,7 +544,7 @@
                         jtnSearchTermsID.push(item.id);
                     }
                 });
-            
+
                 if (title !== null) {
                     return jtnSearchTermsTitle;
                 } else if (id !== null) {
@@ -595,7 +554,7 @@
                 }
             }
 
-            const autoCompleteConstructor = function(refresh) {
+            var autoCompleteConstructor = function(refresh) {
                 const autoCompleteJS = new autoComplete({
                     selector: "#jumpToNavAutoComplete",
                     placeHolder: 'Search',
@@ -619,10 +578,14 @@
                                 autoCompleteJS.input.value = selection;
                                 autoCompleteJS.input.select();
                                 
-                                const associatedLink = navWrapperEl.querySelector(`[href="#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}"]`);
+                                // Needs logic for regular clicks
+                                const associatedLink = 
+                                    navWrapperEl.querySelector(`[href="#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}"]`) ||
+                                    navWrapperEl.querySelector(`#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}`);
 
                                 if (associatedLink.closest('.jump-to-nav__item--parent')) {
                                     const closestToggleClosedBtn = associatedLink.closest('.jump-to-nav__item--parent').querySelector('.jump-to-nav__expand-button[aria-expanded="false"]');
+                                    
                                     if (closestToggleClosedBtn) {
                                         closestToggleClosedBtn.click();
                                     }
@@ -760,6 +723,95 @@
         } else {
             navWrapperEl.querySelector('.jump-to-nav__showonly').remove();
         }
+
+
+
+
+
+
+
+        if (param.siteNav !== null) {
+            const siteNav = document.querySelector('.jump-to-nav__site-menu');
+
+            fetch('index.html')
+                .then(function(response) {
+                    // When the page is loaded convert it to text
+                    return response.text()
+                })
+                .then(function(html) {
+                    
+                    // Initialize the DOM parser
+                    const parser = new DOMParser();
+            
+                    // Parse the text
+                    const doc = parser.parseFromString(html, "text/html");
+
+                    // Cache nav lists
+                    const navItems = doc.querySelectorAll('.static-site-nav');
+
+                    // Add and cleanup/adjust list and list items
+                    navItems.forEach(item => {
+                        const currentNavItem = item;
+                        siteNav.appendChild(currentNavItem);
+
+                        // Remove all current class attributes
+                        const allClassSelectors = currentNavItem.querySelectorAll('[class]');
+                        allClassSelectors.forEach(entry => {
+                            entry.removeAttribute('class');
+                        });
+
+                        currentNavItem.classList.add('jump-to-nav__list');
+
+                        const childItems = currentNavItem.querySelectorAll('li');
+                        childItems.forEach(child => {
+                            child.classList.add('jump-to-nav__item');
+                            child.querySelector('a').classList.add('jump-to-nav__link');
+
+                            if (param.nest !== null) {
+                                const childList = child.querySelectorAll('ul');
+                                childList.forEach(list => {
+                                    list.classList.add('jump-to-nav__nested-list');
+                                    list.closest('.jump-to-nav__item').classList.add('jump-to-nav__item--parent')
+                                });
+                            }
+                        });
+
+                        if (param.linkCopy !== null || param.collapseNested !== null) {
+                            addControlsElement(childItems);
+                            tempItemControls.remove();
+                        } else {
+                            tempItemControls.remove();
+                        }
+                        
+                        if (param.linkCopy !== null) {
+                            linkCopyFunction(childItems);
+                        } else {
+                            currentNavItem.querySelectorAll('.jump-to-nav__copy-button, .jump-to-nav__copy-bubble').forEach(item => {
+                                item.remove()
+                            });
+                        }
+                        
+                        if (param.collapseNested !== null) {
+                            const childrenControls = currentNavItem.querySelectorAll('.jump-to-nav__item--parent > .jump-to-nav__item-controls');
+                            applyExpandDisplay(childrenControls);
+                        }
+                    });
+
+                    if (param.search !== null || navItem.length >= parseInt(param.showSearchAfter)) {
+                        autoCompleteConstructor('refresh');
+                    }
+                })
+                .catch(function(err) {  
+                    console.log('Failed to get navigation: ', err);  
+                });
+        }
+
+
+
+
+
+
+
 
 
         //
