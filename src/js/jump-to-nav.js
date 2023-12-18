@@ -62,7 +62,8 @@
             align: null,
             nest: null,
             css: null,
-            siteNav: null
+            siteNav: null,
+            fetchUrl: null
         }
     
         if (scriptLinkage) {
@@ -84,6 +85,7 @@
             param.nest = urlParam.get('nest');
             param.css = urlParam.get('css');
             param.siteNav = urlParam.get('site-nav');
+            param.fetchUrl = urlParam.get('fetch-nav');
         }
     
     
@@ -430,6 +432,23 @@
 
             navWrapperEl.classList.add('jump-to-nav--collapse-nested');
         }
+
+        const sectionExpandButton = navWrapperEl.querySelectorAll('.jump-to-nav__section-controls');
+        sectionExpandButton.forEach(item => {
+            item.addEventListener('click', function () {
+                if (this.getAttribute('aria-expanded') === 'false') {
+                    this.setAttribute('aria-expanded', 'true');
+                    this
+                        .closest('.jump-to-nav__section')
+                        .classList.add('jump-to-nav__section--showing');
+                } else {
+                    this.setAttribute('aria-expanded', 'false');
+                    this
+                        .closest('.jump-to-nav__section')
+                        .classList.remove('jump-to-nav__section--showing');
+                }
+            });
+        });
     
     
         //
@@ -440,6 +459,7 @@
     
         maximizeButton.addEventListener('click', function () {
             navWrapperEl.classList.add('jump-to-nav--showing');
+            transitionClass(navWrapperEl);
 
             if (param.searchFocus !== null) {
                 setTimeout(function () {
@@ -450,10 +470,23 @@
         });
     
         const minimizeButton = navWrapperEl.querySelector('.jump-to-nav__minimize');
-    
+        
         minimizeButton.addEventListener('click', function () {
-            navWrapperEl.classList.remove('jump-to-nav--showing');
+            transitionClass(navWrapperEl);
+            
+            setTimeout(() => {
+                navWrapperEl.classList.remove('jump-to-nav--showing');
+            }, 50);
         });
+        
+        const dialogDuration = parseInt(getComputedStyle(navWrapperEl.querySelector('.jump-to-nav__dialog')).getPropertyValue('--jtn-transition-speed'));
+        function transitionClass(el, transitionEl) {
+            el.classList.add('jump-to-nav--transitioning');
+            
+            setTimeout(function () {
+                el.classList.remove('jump-to-nav--transitioning');
+            }, dialogDuration);
+        }
     
 
         //       
@@ -530,17 +563,18 @@
                         const titleClean = link.textContent.replace(/[^a-z0-9]/gi, ' ');
                         const titleReady = camelize(titleClean);
                         link.setAttribute('id', titleReady);
-                        
-                        jtnSearchTermsTitle.push(link.textContent);
+
+                        jtnSearchTermsTitle.push({'Navigate to': link.textContent});
                         jtnSearchTermsID.push(link.id);
                     });
                 }
                 
+                // In page items menu
                 document.querySelectorAll('[data-jtn-anchor]').forEach((item) => {
                     if ((item.offsetParent !== null)) {
                         const titleText = jtnParseOption(item.getAttribute('data-jtn-anchor'), 'title');
-                
-                        jtnSearchTermsTitle.push(titleText);
+
+                        jtnSearchTermsTitle.push({'On this page': titleText});
                         jtnSearchTermsID.push(item.id);
                     }
                 });
@@ -559,11 +593,19 @@
                     selector: "#jumpToNavAutoComplete",
                     placeHolder: 'Search',
                     data: {
-                        src: renderDataArrays(true, null)
+                        src: renderDataArrays(true, null),
+                        keys: ['Navigate to', 'On this page']
                     },
                     resultItem: {
+                        element: (item, data) => {
+                            item.innerHTML = /* html */`
+                                <span class="autoComplete-result-cat">${data.key}</span>
+                                ${data.match}
+                            `;
+                        },
                         highlight: true,
                     },
+                    
                     events: {
                         input: {
                             focus() {
@@ -573,16 +615,13 @@
                             },
                             selection(event) {
                                 const feedback = event.detail;
-                                
                                 const selection = feedback.selection.value;
-                                autoCompleteJS.input.value = selection;
-                                autoCompleteJS.input.select();
                                 
                                 // Needs logic for regular clicks
                                 const associatedLink = 
                                     navWrapperEl.querySelector(`[href="#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}"]`) ||
                                     navWrapperEl.querySelector(`#${renderDataArrays(null, true)[findIndex(autoCompleteJS.data.src, selection)]}`);
-
+                                
                                 if (associatedLink.closest('.jump-to-nav__item--parent')) {
                                     const closestToggleClosedBtn = associatedLink.closest('.jump-to-nav__item--parent').querySelector('.jump-to-nav__expand-button[aria-expanded="false"]');
                                     
@@ -590,8 +629,11 @@
                                         closestToggleClosedBtn.click();
                                     }
                                 }
-
+                                
                                 associatedLink.click();
+                                const valueText = Object.values(selection).toString().trim();
+                                autoCompleteJS.input.value = valueText;
+                                autoCompleteJS.input.select();
                             },
                             keyup(event) {
                                 if (event.key === 'Enter' && !navWrapperEl.querySelector(`[aria-selected="true"]`)) {
@@ -619,24 +661,31 @@
                     // Re-run autocomplete initializer
                     autoCompleteConstructor();
                 }
+
+                clearInputButton();
             }
 
             autoCompleteConstructor();
             
-            searchInput.addEventListener('input', () => {
-                if (searchInput && searchInput.value) {
-                    searchEl.classList.add('jump-to-nav__search--has-value');
-                } else {
-                    searchEl.classList.remove('jump-to-nav__search--has-value');
-                }
-            });
+            function clearInputButton() {
+                const searchEl = document.querySelector('.jump-to-nav__search');
+                const searchInput = searchEl.querySelector('.jump-to-nav__search-input');
 
-            const searchClear = searchEl.querySelector('.jump-to-nav__search-clear');
-            searchClear.addEventListener('click', () => {
-                searchInput.value = '';
-                searchEl.classList.remove('jump-to-nav__search--has-value');
-                searchInput.focus();
-            })
+                searchInput.addEventListener('input', () => {
+                    if (searchInput && searchInput.value) {
+                        searchEl.classList.add('jump-to-nav__search--has-value');
+                    } else {
+                        searchEl.classList.remove('jump-to-nav__search--has-value');
+                    }
+                });
+    
+                const searchClear = searchEl.querySelector('.jump-to-nav__search-clear');
+                searchClear.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchEl.classList.remove('jump-to-nav__search--has-value');
+                    searchInput.focus();
+                });
+            }
 
             searchEl.classList.remove('jump-to-nav__search--loading');
         } else {
@@ -732,8 +781,9 @@
 
         if (param.siteNav !== null) {
             const siteNav = document.querySelector('.jump-to-nav__site-menu');
+            const fetchUrlString = (param.fetchUrl === null) ? '/index.html' : param.fetchUrl;
 
-            fetch('index.html')
+            fetch(fetchUrlString)
                 .then(function(response) {
                     // When the page is loaded convert it to text
                     return response.text()
@@ -767,8 +817,12 @@
                             child.classList.add('jump-to-nav__item');
                             child.querySelector('a').classList.add('jump-to-nav__link');
 
+                            const childList = child.querySelectorAll('ul');
+                            childList.forEach(list => {
+                                list.classList.add('jump-to-nav__nested-list');
+                            });
+                            
                             if (param.nest !== null) {
-                                const childList = child.querySelectorAll('ul');
                                 childList.forEach(list => {
                                     list.classList.add('jump-to-nav__nested-list');
                                     list.closest('.jump-to-nav__item').classList.add('jump-to-nav__item--parent')
@@ -804,6 +858,13 @@
                 .catch(function(err) {  
                     console.log('Failed to get navigation: ', err);  
                 });
+        } else {
+            if (showGroup.length) {
+                document.querySelector('.jump-to-nav__header').appendChild(navWrapperEl.querySelector('.jump-to-nav__showonly'));
+            }
+            document.querySelectorAll('.jump-to-nav__section-controls').forEach(item => {
+                item.remove();
+            })
         }
 
 
@@ -950,3 +1011,5 @@
         return splitOn.split(optionString + ':')[1].trim();
     }
 })();
+
+

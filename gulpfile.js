@@ -27,7 +27,7 @@ const inject = require('gulp-inject-string');
 const fs = require('fs');
 const gulpReplace = require('gulp-replace');
 
-const localhost = 'http://127.0.0.1:8080/';
+const localhost = 'http://localhost:8080/';
 
 const roots = {
     src: './src',
