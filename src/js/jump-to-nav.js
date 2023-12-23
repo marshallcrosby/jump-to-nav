@@ -31,8 +31,9 @@
     "use strict"
     
     const jumpToElement = document.querySelectorAll('[data-jtn-anchor]');
+    const siteNavElement = document.querySelectorAll('.static-site-nav');
 
-    if (jumpToElement.length) {
+    if (jumpToElement.length || siteNavElement.length) {
 
         Element.prototype.setAttributes = function (attrs) {
             for(let key in attrs) {
@@ -123,7 +124,7 @@
         document.body.appendChild(navWrapperEl);
 
         if (param.topLocation !== null) {
-            document.documentElement.style.setProperty('--jtn-top-location', param.topLocation);
+            document.documentElement.style.setProperty('--jtn-y-location', param.topLocation);
         }
         
         if (param.bottomLocation !== null) {
@@ -816,6 +817,8 @@
                         childItems.forEach(child => {
                             child.classList.add('jump-to-nav__item');
                             child.querySelector('a').classList.add('jump-to-nav__link');
+                            const linkText = child.querySelector('a').innerText;
+                            child.querySelector('a').innerHTML = `<span>${linkText}</span>`;
 
                             const childList = child.querySelectorAll('ul');
                             childList.forEach(list => {
@@ -858,6 +861,17 @@
                 .catch(function(err) {  
                     console.log('Failed to get navigation: ', err);  
                 });
+
+                if (!jumpToElement.length) {
+                    navElement
+                        .closest('.jump-to-nav__section')
+                        .remove();
+                        
+                    siteNav
+                        .closest('.jump-to-nav__section')
+                        .querySelector('.jump-to-nav__section-controls')
+                        .style.display = 'none';
+                }
         } else {
             if (showGroup.length) {
                 document.querySelector('.jump-to-nav__header').appendChild(navWrapperEl.querySelector('.jump-to-nav__showonly'));

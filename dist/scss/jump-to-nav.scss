@@ -1,7 +1,8 @@
 :root {
 
     // Base
-    --jtn-top-location: 100px;
+    --jtn-y-location: 100px;
+    --jtn-x-location: 18px;
     --jtn-idle-width: 40px;
     --jtn-base-font-size: 16px;
     --jtn-small-font-size: 12.5px;
@@ -12,7 +13,7 @@
     --jtn-dialog-width: 240px;
     --jtn-padding-y-common: 10px;
     --jtn-padding-x-common: 16px;
-    --jtn-link-spacing: 7px;
+    --jtn-link-spacing: 11px;
     --jtn-button-size: 23px;
 
     // Colors
@@ -39,8 +40,8 @@
 
 .jump-to-nav {
     position: fixed;
-    top: var(--jtn-top-location);
-    right: 18px;
+    top: var(--jtn-y-location);
+    right: var(--jtn-x-location);
 
     pointer-events: none;
 
@@ -136,7 +137,7 @@
             cursor: pointer;
 
             border: 0;
-            border-radius: 30px;
+            border-radius: 50%;
             background-color: transparent;
         }
 
@@ -224,7 +225,6 @@
             svg {
                 width: 12px;
                 height: 6px;
-                margin-top: 2px;
             }
 
             &:hover,
@@ -589,7 +589,7 @@
 
     &.jump-to-nav--left {
         right: auto;
-        left: 18px;
+        left: var(--jtn-x-location);
 
         .jump-to-nav__maximize {
             right: auto;
@@ -681,8 +681,6 @@
     }
 
     &.jump-to-nav--collapse-nested {
-        --jtn-link-spacing: 11px;
-        
         .jump-to-nav__nested-list {
             height: 0;
             overflow: hidden;
